@@ -1,27 +1,35 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
 export type ModoJuego = "fiesta" | "hot";
-export type NavigationDirection = "forward" | "backward";
+export type NavDirection = "forward" | "backward";
+
+export type Jugador = {
+  nombre: string;
+  avatar?: any; // Ruta de la imagen, opcional
+};
 
 type PlayersContextType = {
-  jugadores: string[];
-  setJugadores: (jugadores: string[]) => void;
-  addJugador: (jugador: string) => void;
+  jugadores: Jugador[];
+  setJugadores: (jugadores: Jugador[]) => void;
+  addJugador: (jugador: Jugador) => void;
   clearJugadores: () => void;
   modo: ModoJuego;
   setModo: (modo: ModoJuego) => void;
-  navDirection: NavigationDirection;
-  setNavDirection: (dir: NavigationDirection) => void;
+  navDirection: NavDirection;
+  setNavDirection: (dir: NavDirection) => void;
 };
 
 const PlayersContext = createContext<PlayersContextType | undefined>(undefined);
 
 export const PlayersProvider = ({ children }: { children: ReactNode }) => {
-  const [jugadores, setJugadoresState] = useState<string[]>([]);
+  const [jugadores, setJugadoresState] = useState<Jugador[]>([]);
   const [modo, setModo] = useState<ModoJuego>("hot");
-  const [navDirection, setNavDirection] = useState<NavigationDirection>("forward");
+  const [navDirection, setNavDirection] = useState<NavDirection>("forward");
 
-  const addJugador = (jugador: string) => setJugadoresState((prev) => [...prev, jugador]);
+  const addJugador = (jugador: Jugador) => {
+    setJugadoresState((prev) => [...prev, jugador]);
+  };
+
   const clearJugadores = () => setJugadoresState([]);
 
   return (

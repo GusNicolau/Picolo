@@ -6,10 +6,8 @@ import { usePlayers } from "../src/context/PlayersContext";
 const amigos = [
   { nombre: "Gustavo", imagen: require("../assets/moustache/gustavo.png") },
   { nombre: "Carlos", imagen: require("../assets/moustache/carlos.png") },
-  { nombre: "Gustavo1", imagen: require("../assets/moustache/gustavo.png") },
-  { nombre: "Carl2os", imagen: require("../assets/moustache/carlos.png") },
-  { nombre: "Gus2tavo", imagen: require("../assets/moustache/gustavo.png") },
-  { nombre: "Car3los", imagen: require("../assets/moustache/carlos.png") },
+  { nombre: "Andreu", imagen: require("../assets/moustache/andreu.png") },
+  { nombre: "Dani", imagen: require("../assets/moustache/dani.png") },
 ];
 
 export default function MoustacheScreen() {
@@ -26,9 +24,16 @@ export default function MoustacheScreen() {
   };
 
   const confirmarSeleccion = () => {
-    seleccionados.forEach((nombre) => addJugador(nombre));
+    seleccionados.forEach((nombre) => {
+      const jugador = {
+        nombre,
+        avatar: amigos.find(a => a.nombre === nombre)?.imagen
+      };
+      addJugador(jugador);
+    });
     router.back();
   };
+
 
   return (
     <View style={styles.container}>

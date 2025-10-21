@@ -1,12 +1,14 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { usePlayers } from "../src/context/PlayersContext";
+import { Jugador, usePlayers } from "../src/context/PlayersContext";
 
 // Mapa de avatares de Moustache
 const avatares: Record<string, any> = {
   Gustavo: require("../assets/moustache/gustavo.png"),
   Carlos: require("../assets/moustache/carlos.png"),
+  Dani: require("../assets/moustache/dani.png"),
+  Andreu: require("../assets/moustache/andreu.png"),
 };
 
 export default function JugadoresScreen() {
@@ -14,15 +16,22 @@ export default function JugadoresScreen() {
   const { jugadores, addJugador, setJugadores } = usePlayers();
   const router = useRouter();
 
+  // Añadir jugador manualmente
   const añadirJugador = () => {
-    if (nombre.trim() !== "") {
-      addJugador(nombre.trim());
-      setNombre("");
-    }
+    const trimmed = nombre.trim();
+    if (!trimmed) return;
+
+    const nuevoJugador: Jugador = {
+      nombre: trimmed,
+      avatar: avatares[trimmed] || undefined,
+    };
+    addJugador(nuevoJugador);
+    setNombre("");
   };
 
+  // Eliminar jugador
   const eliminarJugador = (nombre: string) => {
-    setJugadores(jugadores.filter(j => j !== nombre));
+    setJugadores(jugadores.filter(j => j.nombre !== nombre));
   };
 
   const empezarJuego = () => {
@@ -54,23 +63,25 @@ export default function JugadoresScreen() {
       </TouchableOpacity>
 
       <FlatList
-  data={jugadores}
-  keyExtractor={(item, index) => index.toString()}
-  style={{ marginTop: 20, width: "100%" }}
-  renderItem={({ item }) => {
-    const avatar = avatares[item];
-    return (
-      <View style={styles.playerContainer}>
-        {avatar && <Image source={avatar} style={styles.avatar} />}
-        <Text style={styles.player}>{item}</Text>
-        <TouchableOpacity onPress={() => eliminarJugador(item)}>
-          <Text style={styles.delete}>❌</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }}
-/>
-
+        data={jugadores}
+        keyExtractor={(item, index) => index.toString()}
+        style={{ marginTop: 20, width: "100%" }}
+        renderItem={({ item }) => {
+          return (
+            <View style={styles.playerContainer}>
+              {item.avatar ? (
+                <Image source={item.avatar} style={styles.avatar} />
+              ) : (
+                <Image source={avatares["Gustavo"]} style={styles.avatar} />
+              )}
+              <Text style={styles.player}>{item.nombre}</Text>
+              <TouchableOpacity onPress={() => eliminarJugador(item.nombre)}>
+                <Text style={styles.delete}>❌</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        }}
+      />
 
       {jugadores.length > 0 && (
         <TouchableOpacity style={styles.startButton} onPress={empezarJuego}>
@@ -92,7 +103,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: "#fff",
     fontWeight: "bold",
-    marginTop: 50,   // ↑ Añadido margen superior
+    marginTop: 50,
     marginBottom: 20,
   },
   input: {
@@ -118,40 +129,39 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   playerContainer: {
-    flexDirection: "row", // horizontal
+    flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#1A1A2E",
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
     marginBottom: 10,
-    justifyContent: "space-between", // espacio entre nombre y botón eliminar
-},
-player: {
-  fontSize: 18,
-  color: "#fff",
-  marginLeft: 30, // separa nombre de la imagen
-  flex: 1, // para ocupar todo el espacio disponible y empujar el botón al final
-},
-avatar: {
-  width: 50,
-  height: 50,
-  borderRadius: 15,
-},
-delete: {
-  fontSize: 18,
-  color: "#FF4C61",
-  marginLeft: 10,
-},
-
+    justifyContent: "space-between",
+  },
+  player: {
+    fontSize: 18,
+    color: "#fff",
+    marginLeft: 20,
+    flex: 1,
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 15,
+  },
+  delete: {
+    fontSize: 18,
+    color: "#FF4C61",
+    marginLeft: 10,
+  },
   startButton: {
-    marginTop: 20,   // Reduce el margen para que no esté pegado al final
+    marginTop: 20,
     backgroundColor: "#FF4C61",
     padding: 15,
     borderRadius: 10,
     width: "100%",
     alignItems: "center",
-    marginBottom: 50, // ↑ Añadido margen inferior
+    marginBottom: 50,
   },
   startButtonText: {
     fontSize: 20,

@@ -1,80 +1,174 @@
-import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { usePlayers } from "../src/context/PlayersContext";
+import { useRouter } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Dimensions, Image, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
+import { Jugador, usePlayers } from "../src/context/PlayersContext";
 import { obtenerRetos } from "../src/controllers/retosController";
 
+
+
+const avatarPorDefecto = require("../assets/moustache/gustavo.png");
+
 export default function JuegoScreen() {
+  const router = useRouter();
   const { jugadores, modo } = usePlayers();
-  const [reto, setReto] = useState<string>("Pulsa el botón para empezar 👇");
+  const [reto, setReto] = useState<string>("");
+  const [jugadorActual, setJugadorActual] = useState<Jugador | null>(null);
+  const [resultados, setResultados] = useState<Record<string, { cumplidos: number; fallos: number }>>({});
+  const [showConfetti, setShowConfetti] = useState(false); // <-- Estado confeti
 
   const retos = obtenerRetos(modo);
+  const translateX = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+  const { width, height } = Dimensions.get("window");
+
+  useEffect(() => {
+    generarReto();
+  }, []);
 
   const generarReto = () => {
-    if (jugadores.length === 0 || retos.length === 0) {
-      setReto("No hay jugadores o retos disponibles 😅");
-      return;
-    }
+    if (jugadores.length === 0 || retos.length === 0) return;
 
     const retoAleatorio = retos[Math.floor(Math.random() * retos.length)];
-    if (retoAleatorio.includes("{player}")) {
-      const jugadorRandom = jugadores[Math.floor(Math.random() * jugadores.length)];
-      setReto(retoAleatorio.replace("{player}", jugadorRandom));
+    const jugadorRandom = jugadores[Math.floor(Math.random() * jugadores.length)];
+    setJugadorActual(jugadorRandom);
+
+    setReto(
+      retoAleatorio.includes("{player}")
+        ? retoAleatorio.replace("{player}", jugadorRandom.nombre)
+        : retoAleatorio
+    );
+  };
+
+  const registrarResultado = (cumplido: boolean) => {
+    if (!jugadorActual) return;
+
+    setResultados((prev) => {
+      const prevData = prev[jugadorActual.nombre] || { cumplidos: 0, fallos: 0 };
+      return {
+        ...prev,
+        [jugadorActual.nombre]: {
+          cumplidos: prevData.cumplidos + (cumplido ? 1 : 0),
+          fallos: prevData.fallos + (!cumplido ? 1 : 0),
+        },
+      };
+    });
+  };
+
+ const handleSwipe = (cumplido: boolean) => {
+    if (!jugadorActual) return;
+
+    Animated.parallel([
+      Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+      Animated.timing(translateX, { toValue: cumplido ? -500 : 500, duration: 200, useNativeDriver: true }),
+    ]).start(() => {
+      registrarResultado(cumplido);
+      generarReto();
+
+      // disparar confeti si cumplido
+      if (cumplido) {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 1500);
+      }
+
+      // Reset position y fade in con rebote
+      translateX.setValue(0);
+      Animated.spring(opacity, { toValue: 1, useNativeDriver: true, friction: 5, tension: 60 }).start();
+    });
+  };
+
+
+  const onGestureEvent = Animated.event([{ nativeEvent: { translationX: translateX } }], {
+    useNativeDriver: true,
+  });
+
+  const onHandlerStateChange = ({ nativeEvent }: any) => {
+    const threshold = 100;
+    if (nativeEvent.translationX > threshold) {
+      handleSwipe(false);
+    } else if (nativeEvent.translationX < -threshold) {
+      handleSwipe(true);
     } else {
-      setReto(retoAleatorio);
+      Animated.spring(translateX, { toValue: 0, useNativeDriver: true, friction: 5, tension: 60 }).start();
     }
   };
 
+  const terminarPartida = () => {
+    router.push({ pathname: "/resultados", params: { resultados: JSON.stringify(resultados) } });
+  };
+
+  const rotate = translateX.interpolate({
+    inputRange: [-300, 0, 300],
+    outputRange: ["-40deg", "0deg", "40deg"],
+    extrapolate: "clamp",
+  });
+
+  const backgroundColor = translateX.interpolate({
+    inputRange: [-500, 0, 500],
+    outputRange: ["#4CFF85", "#0F3460", "#FF4C61"],
+    extrapolate: "clamp",
+  });
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>🎲 Reto actual</Text>
-      <View style={styles.card}>
-        <Text style={styles.reto}>{reto}</Text>
-      </View>
-      <TouchableOpacity style={styles.button} onPress={generarReto}>
-        <Text style={styles.buttonText}>➡️ Siguiente</Text>
-      </TouchableOpacity>
-    </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Animated.View style={[styles.container, { backgroundColor }]}>
+        <TouchableOpacity style={styles.terminarButton} onPress={terminarPartida}>
+          <Text style={styles.terminarText}>❌</Text>
+        </TouchableOpacity>
+
+        <PanGestureHandler onGestureEvent={onGestureEvent} onEnded={onHandlerStateChange}>
+          <Animated.View style={[styles.card, { transform: [{ translateX }, { rotate }], opacity }]}>
+            <Text style={styles.title}>🎲 Reto actual</Text>
+
+            {jugadorActual && (
+              <>
+                <Image source={jugadorActual.avatar || avatarPorDefecto} style={styles.avatarJugador} />
+                <Text style={styles.jugadorNombre}>{jugadorActual.nombre}</Text>
+              </>
+            )}
+
+            <Text style={styles.reto}>{reto}</Text>
+          </Animated.View>
+        </PanGestureHandler>
+
+
+      </Animated.View>
+
+    </GestureHandlerRootView>
   );
 }
 
-// Mantén tus estilos como estaban
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#0F3460",
-    alignItems: "center",
-    justifyContent: "center",
+  container: { flex: 1, alignItems: "center", justifyContent: "center", padding: 20 },
+  card: {
+    width: "100%",
+    backgroundColor: "#1A1A2E",
+    borderRadius: 20,
     padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 8,
   },
-  title: {
-    fontSize: 26,
+  jugadorNombre: {
+    fontSize: 24,
     fontWeight: "bold",
     color: "#fff",
-    marginBottom: 20,
-  },
-  card: {
-    backgroundColor: "#1A1A2E",
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 30,
-    width: "100%",
-    alignItems: "center",
-  },
-  reto: {
-    fontSize: 22,
-    color: "#fff",
+    marginVertical: 10,
     textAlign: "center",
   },
-  button: {
-    backgroundColor: "#FF4C61",
-    padding: 15,
-    borderRadius: 10,
-    width: "100%",
-    alignItems: "center",
+  title: { fontSize: 26, fontWeight: "bold", color: "#fff", marginBottom: 15, textAlign: "center" },
+  reto: { fontSize: 22, color: "#fff", textAlign: "center", marginVertical: 15 },
+  avatarJugador: { width: 320, height: 320, borderRadius: 10, marginBottom: 15 },
+  terminarButton: {
+    position: "absolute",
+    top: 40,
+    right: 20,
+    padding: 12,
+    borderRadius: 25,
+    zIndex: 10,
   },
-  buttonText: {
-    fontSize: 20,
-    color: "#fff",
-    fontWeight: "bold",
-  },
+  terminarText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
 });
