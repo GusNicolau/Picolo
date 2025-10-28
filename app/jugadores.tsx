@@ -1,14 +1,15 @@
+import BotonVolver from "@/src/components/BotonVolver";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Jugador, usePlayers } from "../src/context/PlayersContext";
-
 // Mapa de avatares de Moustache
 const avatares: Record<string, any> = {
   Gustavo: require("../assets/moustache/gustavo.png"),
   Carlos: require("../assets/moustache/carlos.png"),
   Dani: require("../assets/moustache/dani.png"),
   Andreu: require("../assets/moustache/andreu.png"),
+  Mario: require("../assets/moustache/mario.png"),  
 };
 
 export default function JugadoresScreen() {
@@ -40,6 +41,8 @@ export default function JugadoresScreen() {
 
   return (
     <View style={styles.container}>
+      <BotonVolver />
+
       <Text style={styles.title}>👥 Añadir jugadores</Text>
 
       <TextInput

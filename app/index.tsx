@@ -1,3 +1,4 @@
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { usePlayers } from "../src/context/PlayersContext";
@@ -5,15 +6,15 @@ import { usePlayers } from "../src/context/PlayersContext";
 export default function HomeScreen() {
   const router = useRouter();
   const { setModo } = usePlayers();
+  const colorScheme = useColorScheme();
 
   const seleccionarModo = (modo: "fiesta" | "hot") => {
     setModo(modo);
-    console.log("Modo seleccionado:", modo);
     router.push("/jugadores");
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colorScheme === "dark" ? "#0F3460" : "#FFFFFF" }]}>
       <Text style={styles.title}>🍻 Bienvenido a Picolo 🍻</Text>
       <Text style={styles.subtitle}>Elige un modo de juego</Text>
 
@@ -39,11 +40,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#16213E",
     padding: 20,
   },
-  title: { fontSize: 28, color: "#fff", fontWeight: "bold", marginBottom: 20 },
-  subtitle: { fontSize: 18, color: "#ccc", marginBottom: 40 },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 20, color: "#fff", textAlign: "center" },
+  subtitle: { fontSize: 18, color: "#ccc", marginBottom: 40, textAlign: "center" },
   button: {
     padding: 18,
     borderRadius: 10,
@@ -51,5 +51,5 @@ const styles = StyleSheet.create({
     width: "80%",
     alignItems: "center",
   },
-  buttonText: { fontSize: 20, color: "#fff", fontWeight: "bold" },
+  buttonText: { fontSize: 20, fontWeight: "bold", color: "#fff" },
 });

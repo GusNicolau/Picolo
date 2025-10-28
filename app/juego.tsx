@@ -1,11 +1,10 @@
 import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, Image, StyleSheet, Text, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
+import BotonVolver from "../src/components/BotonVolver";
 import { Jugador, usePlayers } from "../src/context/PlayersContext";
 import { obtenerRetos } from "../src/controllers/retosController";
-
-
 
 const avatarPorDefecto = require("../assets/moustache/gustavo.png");
 
@@ -15,22 +14,25 @@ export default function JuegoScreen() {
   const [reto, setReto] = useState<string>("");
   const [jugadorActual, setJugadorActual] = useState<Jugador | null>(null);
   const [resultados, setResultados] = useState<Record<string, { cumplidos: number; fallos: number }>>({});
-  const [showConfetti, setShowConfetti] = useState(false); // <-- Estado confeti
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const retos = obtenerRetos(modo);
   const translateX = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(1)).current;
-  const { width, height } = Dimensions.get("window");
 
   useEffect(() => {
     generarReto();
   }, []);
 
   const generarReto = () => {
-    if (jugadores.length === 0 || retos.length === 0) return;
+    if (!jugadores.length || !retos.length) {
+      setReto(""); // asegura que nunca sea undefined
+      setJugadorActual(null);
+      return;
+    }
 
-    const retoAleatorio = retos[Math.floor(Math.random() * retos.length)];
     const jugadorRandom = jugadores[Math.floor(Math.random() * jugadores.length)];
+    const retoAleatorio = retos[Math.floor(Math.random() * retos.length)];
     setJugadorActual(jugadorRandom);
 
     setReto(
@@ -55,7 +57,7 @@ export default function JuegoScreen() {
     });
   };
 
- const handleSwipe = (cumplido: boolean) => {
+  const handleSwipe = (cumplido: boolean) => {
     if (!jugadorActual) return;
 
     Animated.parallel([
@@ -65,32 +67,22 @@ export default function JuegoScreen() {
       registrarResultado(cumplido);
       generarReto();
 
-      // disparar confeti si cumplido
       if (cumplido) {
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 1500);
       }
 
-      // Reset position y fade in con rebote
       translateX.setValue(0);
       Animated.spring(opacity, { toValue: 1, useNativeDriver: true, friction: 5, tension: 60 }).start();
     });
   };
 
-
-  const onGestureEvent = Animated.event([{ nativeEvent: { translationX: translateX } }], {
-    useNativeDriver: true,
-  });
-
+  const onGestureEvent = Animated.event([{ nativeEvent: { translationX: translateX } }], { useNativeDriver: true });
   const onHandlerStateChange = ({ nativeEvent }: any) => {
     const threshold = 100;
-    if (nativeEvent.translationX > threshold) {
-      handleSwipe(false);
-    } else if (nativeEvent.translationX < -threshold) {
-      handleSwipe(true);
-    } else {
-      Animated.spring(translateX, { toValue: 0, useNativeDriver: true, friction: 5, tension: 60 }).start();
-    }
+    if (nativeEvent.translationX > threshold) handleSwipe(false);
+    else if (nativeEvent.translationX < -threshold) handleSwipe(true);
+    else Animated.spring(translateX, { toValue: 0, useNativeDriver: true, friction: 5, tension: 60 }).start();
   };
 
   const terminarPartida = () => {
@@ -112,6 +104,7 @@ export default function JuegoScreen() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Animated.View style={[styles.container, { backgroundColor }]}>
+        <BotonVolver />
         <TouchableOpacity style={styles.terminarButton} onPress={terminarPartida}>
           <Text style={styles.terminarText}>❌</Text>
         </TouchableOpacity>
@@ -121,19 +114,16 @@ export default function JuegoScreen() {
             <Text style={styles.title}>🎲 Reto actual</Text>
 
             {jugadorActual && (
-              <>
+              <View style={{ alignItems: "center" }}>
                 <Image source={jugadorActual.avatar || avatarPorDefecto} style={styles.avatarJugador} />
                 <Text style={styles.jugadorNombre}>{jugadorActual.nombre}</Text>
-              </>
+              </View>
             )}
 
-            <Text style={styles.reto}>{reto}</Text>
+            <Text style={styles.reto}>{reto || ""}</Text>
           </Animated.View>
         </PanGestureHandler>
-
-
       </Animated.View>
-
     </GestureHandlerRootView>
   );
 }
@@ -152,23 +142,10 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 8,
   },
-  jugadorNombre: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-    marginVertical: 10,
-    textAlign: "center",
-  },
+  jugadorNombre: { fontSize: 24, fontWeight: "bold", color: "#fff", marginVertical: 10, textAlign: "center" },
   title: { fontSize: 26, fontWeight: "bold", color: "#fff", marginBottom: 15, textAlign: "center" },
   reto: { fontSize: 22, color: "#fff", textAlign: "center", marginVertical: 15 },
   avatarJugador: { width: 320, height: 320, borderRadius: 10, marginBottom: 15 },
-  terminarButton: {
-    position: "absolute",
-    top: 40,
-    right: 20,
-    padding: 12,
-    borderRadius: 25,
-    zIndex: 10,
-  },
+  terminarButton: { position: "absolute", top: 40, right: 20, padding: 12, borderRadius: 25, zIndex: 10 },
   terminarText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
 });

@@ -1,11 +1,14 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 
 const avatares: Record<string, any> = {
   Gustavo: require("../assets/moustache/gustavo.png"),
   Carlos: require("../assets/moustache/carlos.png"),
   Andreu: require("../assets/moustache/andreu.png"),
   Dani: require("../assets/moustache/dani.png"),
+  Mario: require("../assets/moustache/mario.png"),
 };
 
 const avatarPorDefecto = require("../assets/moustache/gustavo.png");
@@ -75,7 +78,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     width: "100%",
-    shadowColor: "#000",
+    shadowColor: "#a50d0dff",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.4,
     shadowRadius: 5,
@@ -86,8 +89,8 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 15,
     marginRight: 20,
-    borderWidth: 3,
-    borderColor: "#4CFF85",
+    //borderWidth: 3,
+    //borderColor: "#4CFF85",
   },
   player: { 
     fontSize: 22,

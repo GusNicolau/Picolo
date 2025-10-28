@@ -1,5 +1,6 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
+
 export type ModoJuego = "fiesta" | "hot";
 export type NavDirection = "forward" | "backward";
 
