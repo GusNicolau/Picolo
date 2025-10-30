@@ -1,6 +1,13 @@
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import {
+  ImageBackground,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { usePlayers } from "../src/context/PlayersContext";
 
 export default function HomeScreen() {
@@ -14,42 +21,99 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colorScheme === "dark" ? "#0F3460" : "#FFFFFF" }]}>
-      <Text style={styles.title}>🍻 Bienvenido a Picolo 🍻</Text>
-      <Text style={styles.subtitle}>Elige un modo de juego</Text>
+    <ImageBackground
+      source={require("../assets/images/fuego-fondo.jpg")}
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay}>
+        <Text style={styles.title}>PICOLO BATTLE</Text>
+        <Text style={styles.subtitle}>Selecciona tu modo de combate</Text>
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#2ecc71" }]}
-        onPress={() => seleccionarModo("fiesta")}
-      >
-        <Text style={styles.buttonText}>🎉 Modo Fiesta</Text>
-      </TouchableOpacity>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            styles.greenButton,
+            pressed && styles.buttonPressed,
+          ]}
+          onPress={() => seleccionarModo("fiesta")}
+        >
+          <Text style={styles.buttonText}>MODO FIESTA</Text>
+        </Pressable>
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#FF4C61" }]}
-        onPress={() => seleccionarModo("hot")}
-      >
-        <Text style={styles.buttonText}>🔥 Modo Caliente</Text>
-      </TouchableOpacity>
-    </View>
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            styles.redButton,
+            pressed && styles.buttonPressed,
+          ]}
+          onPress={() => seleccionarModo("hot")}
+        >
+          <Text style={styles.buttonText}>MODO CALIENTE</Text>
+        </Pressable>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  overlay: {
     flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.85)",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
   },
-  title: { fontSize: 28, fontWeight: "bold", marginBottom: 20, color: "#fff", textAlign: "center" },
-  subtitle: { fontSize: 18, color: "#ccc", marginBottom: 40, textAlign: "center" },
-  button: {
-    padding: 18,
-    borderRadius: 10,
-    marginBottom: 20,
-    width: "80%",
-    alignItems: "center",
+  title: {
+    fontSize: 42,
+    fontWeight: "900",
+    letterSpacing: 2,
+    color: "#FFD700",
+    textShadowColor: "#FF4500",
+    textShadowOffset: { width: 3, height: 3 },
+    textShadowRadius: 8,
+    marginBottom: 10,
+    textAlign: "center",
   },
-  buttonText: { fontSize: 20, fontWeight: "bold", color: "#fff" },
+  subtitle: {
+    fontSize: 18,
+    color: "#bbb",
+    marginBottom: 50,
+    textAlign: "center",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  button: {
+    width: "80%",
+    paddingVertical: 18,
+    borderRadius: 12,
+    marginBottom: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.6,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  greenButton: {
+    backgroundColor: "#1E8449",
+    borderColor: "#00FF88",
+  },
+  redButton: {
+    backgroundColor: "#8B0000",
+    borderColor: "#FF4C61",
+  },
+  buttonPressed: {
+    transform: [{ scale: 0.97 }],
+    opacity: 0.8,
+  },
+  buttonText: {
+    fontSize: 22,
+    fontWeight: "900",
+    color: "#fff",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+  },
 });

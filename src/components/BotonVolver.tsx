@@ -9,15 +9,6 @@ export default function BotonVolver() {
   const navigation = useNavigation();
 
   const handleBack = () => {
-    const current = segments[segments.length - 1];
-
-    // Pantallas que siempre deben volver a jugadores
-    if (["moustache", "juego", "resultados"].includes(current)) {
-      router.push("/jugadores");
-      return;
-    }
-
-    // Si react-navigation puede retroceder, usarlo
     try {
       // @ts-ignore
       if (navigation?.canGoBack && navigation.canGoBack()) {
@@ -27,19 +18,37 @@ export default function BotonVolver() {
       }
     } catch (e) {}
 
-    // Fallback a expo-router segments/router.back()
     if (segments.length > 1) {
       router.back();
       return;
     }
 
-    // Último recurso: volver a index
-    router.push("/");
+    const current = segments[segments.length - 1];
+    if (current === "moustache") {
+      router.replace("/jugadores");
+    } else if (current === "juego" || current === "resultados") {
+      router.replace("/jugadores");
+    } else {
+      router.push("/");
+    }
   };
+
+  // ✅ Detectar si estamos en la raíz (index)
+  // @ts-ignore – ignoramos el tipo porque "index" no está declarado en los tipos de expo-router
+  const currentSegment = segments[segments.length - 1];
+  // @ts-ignore – permitimos comparar con "index" aunque TS no lo reconozca
+  const isIndexScreen = !currentSegment || currentSegment === "index" || segments.length === 0;
+
+  if (isIndexScreen) {
+    return null;
+  }
 
   return (
     <TouchableOpacity style={styles.container} onPress={handleBack}>
-      <Image source={require("../../assets/images/Flecha-Back.png")} style={styles.icon} />
+      <Image
+        source={require("../../assets/images/Flecha-Back.png")}
+        style={styles.icon}
+      />
     </TouchableOpacity>
   );
 }

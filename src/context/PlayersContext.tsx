@@ -1,12 +1,14 @@
+// src/context/PlayersContext.tsx
 import React, { createContext, ReactNode, useContext, useState } from "react";
-
 
 export type ModoJuego = "fiesta" | "hot";
 export type NavDirection = "forward" | "backward";
 
+// Definimos el tipo Jugador con avatar y avatarName opcionales
 export type Jugador = {
   nombre: string;
-  avatar?: any; // Ruta de la imagen, opcional
+  avatar?: any;       // require(...) result
+  avatarName?: string; // ej. "Gustavo", "Mario"
 };
 
 type PlayersContextType = {

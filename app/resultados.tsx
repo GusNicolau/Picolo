@@ -1,7 +1,14 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
+import {
+  FlatList,
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const avatares: Record<string, any> = {
   Gustavo: require("../assets/moustache/gustavo.png"),
@@ -9,6 +16,7 @@ const avatares: Record<string, any> = {
   Andreu: require("../assets/moustache/andreu.png"),
   Dani: require("../assets/moustache/dani.png"),
   Mario: require("../assets/moustache/mario.png"),
+  Ale: require("../assets/moustache/ale.png"),
 };
 
 const avatarPorDefecto = require("../assets/moustache/gustavo.png");
@@ -27,84 +35,129 @@ export default function ResultadosScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>📊 Resultados de la partida</Text>
-      <FlatList
-        data={jugadoresOrdenados}
-        keyExtractor={([nombre]) => nombre}
-        renderItem={({ item: [nombre, stats] }) => (
-          <View style={styles.playerContainer}>
-            <Image
-              source={avatares[nombre] || avatarPorDefecto}
-              style={styles.avatar}
-            />
-            <Text style={styles.player}>
-              {nombre}: ✅ {stats.cumplidos}  ❌ {stats.fallos}
-            </Text>
-          </View>
-        )}
-        style={{ width: "100%", marginBottom: 20 }}
-      />
+    <ImageBackground
+      source={require("../assets/images/fuego-fondo.jpg")} // 🔥 fondo de fuego
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay}>
+        <Text style={styles.title}>RESULTADOS FINALES</Text>
 
-      <TouchableOpacity style={styles.button} onPress={volverAJugadores}>
-        <Text style={styles.buttonText}>🔙 Volver a jugadores</Text>
-      </TouchableOpacity>
-    </View>
+        <FlatList
+          data={jugadoresOrdenados}
+          keyExtractor={([nombre]) => nombre}
+          renderItem={({ item: [nombre, stats], index }) => (
+            <View
+              style={[
+                styles.playerContainer,
+                index === 0 && styles.primerLugar,
+                index === 1 && styles.segundoLugar,
+                index === 2 && styles.tercerLugar,
+              ]}
+            >
+              <Image
+                source={avatares[nombre] || avatarPorDefecto}
+                style={styles.avatar}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.playerName}>
+                  {index + 1}. {nombre}
+                </Text>
+                <Text style={styles.stats}>
+                  ✅ {stats.cumplidos}   ❌ {stats.fallos}
+                </Text>
+              </View>
+            </View>
+          )}
+          style={{ width: "100%", marginBottom: 30 }}
+        />
+
+        <TouchableOpacity style={styles.button} onPress={volverAJugadores}>
+          <Text style={styles.buttonText}>🔙 Volver a jugadores</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#0F3460", 
-    justifyContent: "center", 
-    alignItems: "center", 
-    padding: 20 
+  background: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  title: { 
-    fontSize: 28,
-    fontWeight: "bold", 
-    color: "#fff", 
-    marginBottom: 30,
-    marginTop: 50 
+  overlay: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.8)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
   },
-  playerContainer: { 
-    backgroundColor: "#1A1A2E",
-    marginTop: 5,
-    flexDirection: "row", 
-    alignItems: "center", 
-    marginBottom: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+  title: {
+    fontSize: 30,
+    fontWeight: "900",
+    color: "#FFD700",
+    textShadowColor: "#FF4500",
+    textShadowOffset: { width: 3, height: 3 },
+    textShadowRadius: 8,
+    marginTop: 50,
+    marginBottom: 40,
+    textAlign: "center",
+  },
+  playerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(26, 26, 46, 0.9)",
+    marginBottom: 10,
+    padding: 15,
     borderRadius: 20,
     width: "100%",
-    shadowColor: "#a50d0dff",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.4,
-    shadowRadius: 5,
-    elevation: 6,
+    shadowColor: "#FF0000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 6,
+    elevation: 8,
   },
-  avatar: { 
-    width: 70,
-    height: 70,
+  primerLugar: {
+    borderColor: "#FFD700",
+    borderWidth: 3,
+  },
+  segundoLugar: {
+    borderColor: "#C0C0C0",
+    borderWidth: 2,
+  },
+  tercerLugar: {
+    borderColor: "#CD7F32",
+    borderWidth: 2,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
     borderRadius: 15,
     marginRight: 20,
-    //borderWidth: 3,
-    //borderColor: "#4CFF85",
   },
-  player: { 
+  playerName: {
     fontSize: 22,
     color: "#fff",
     fontWeight: "bold",
+    marginBottom: 5,
+  },
+  stats: {
+    fontSize: 18,
+    color: "#FFDDDD",
   },
   button: {
-    marginBottom: 40,
     backgroundColor: "#FF4C61",
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#FF4C61",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
   },
   buttonText: {
     fontSize: 20,

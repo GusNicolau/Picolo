@@ -1,6 +1,14 @@
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Animated,
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
 import BotonVolver from "../src/components/BotonVolver";
 import { Jugador, usePlayers } from "../src/context/PlayersContext";
@@ -26,7 +34,7 @@ export default function JuegoScreen() {
 
   const generarReto = () => {
     if (!jugadores.length || !retos.length) {
-      setReto(""); // asegura que nunca sea undefined
+      setReto("");
       setJugadorActual(null);
       return;
     }
@@ -78,6 +86,7 @@ export default function JuegoScreen() {
   };
 
   const onGestureEvent = Animated.event([{ nativeEvent: { translationX: translateX } }], { useNativeDriver: true });
+
   const onHandlerStateChange = ({ nativeEvent }: any) => {
     const threshold = 100;
     if (nativeEvent.translationX > threshold) handleSwipe(false);
@@ -97,55 +106,115 @@ export default function JuegoScreen() {
 
   const backgroundColor = translateX.interpolate({
     inputRange: [-500, 0, 500],
-    outputRange: ["#4CFF85", "#0F3460", "#FF4C61"],
+    outputRange: ["#4CFF85", "#000000", "#FF4C61"],
     extrapolate: "clamp",
   });
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Animated.View style={[styles.container, { backgroundColor }]}>
-        <BotonVolver />
-        <TouchableOpacity style={styles.terminarButton} onPress={terminarPartida}>
-          <Text style={styles.terminarText}>❌</Text>
-        </TouchableOpacity>
+      <ImageBackground
+        source={require("../assets/images/fuego-fondo.jpg")} // 🔥 fondo con llamas
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <Animated.View style={[styles.overlay, { backgroundColor }]}>
+          <BotonVolver />
 
-        <PanGestureHandler onGestureEvent={onGestureEvent} onEnded={onHandlerStateChange}>
-          <Animated.View style={[styles.card, { transform: [{ translateX }, { rotate }], opacity }]}>
-            <Text style={styles.title}>🎲 Reto actual</Text>
+          <TouchableOpacity style={styles.terminarButton} onPress={terminarPartida}>
+            <Text style={styles.terminarText}>X</Text>
+          </TouchableOpacity>
 
-            {jugadorActual && (
-              <View style={{ alignItems: "center" }}>
-                <Image source={jugadorActual.avatar || avatarPorDefecto} style={styles.avatarJugador} />
-                <Text style={styles.jugadorNombre}>{jugadorActual.nombre}</Text>
-              </View>
-            )}
+          <PanGestureHandler onGestureEvent={onGestureEvent} onEnded={onHandlerStateChange}>
+            <Animated.View style={[styles.card, { transform: [{ translateX }, { rotate }], opacity }]}>
+              <Text style={styles.title}>RETO ACTUAL</Text>
 
-            <Text style={styles.reto}>{reto || ""}</Text>
-          </Animated.View>
-        </PanGestureHandler>
-      </Animated.View>
+              {jugadorActual && (
+                <View style={{ alignItems: "center" }}>
+                  <Image source={jugadorActual.avatar || avatarPorDefecto} style={styles.avatarJugador} />
+                  <Text style={styles.jugadorNombre}>{jugadorActual.nombre}</Text>
+                </View>
+              )}
+
+              <Text style={styles.reto}>{reto || ""}</Text>
+            </Animated.View>
+          </PanGestureHandler>
+        </Animated.View>
+      </ImageBackground>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center", padding: 20 },
+  background: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  overlay: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "rgba(0,0,0,0.75)",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
   card: {
     width: "100%",
-    backgroundColor: "#1A1A2E",
+    backgroundColor: "rgba(30, 30, 30, 0.9)",
     borderRadius: 20,
-    padding: 20,
+    padding: 25,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    elevation: 8,
+    borderWidth: 2,
+    borderColor: "#FF4C61",
+    shadowColor: "#FF4500",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 10,
   },
-  jugadorNombre: { fontSize: 24, fontWeight: "bold", color: "#fff", marginVertical: 10, textAlign: "center" },
-  title: { fontSize: 26, fontWeight: "bold", color: "#fff", marginBottom: 15, textAlign: "center" },
-  reto: { fontSize: 22, color: "#fff", textAlign: "center", marginVertical: 15 },
-  avatarJugador: { width: 320, height: 320, borderRadius: 10, marginBottom: 15 },
-  terminarButton: { position: "absolute", top: 40, right: 20, padding: 12, borderRadius: 25, zIndex: 10 },
-  terminarText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+  title: {
+    fontSize: 26,
+    fontWeight: "900",
+    color: "#FFD700",
+    textShadowColor: "#FF4500",
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 6,
+    marginBottom: 10,
+  },
+  jugadorNombre: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#fff",
+    marginVertical: 10,
+    textAlign: "center",
+  },
+  reto: {
+    fontSize: 22,
+    color: "#fff",
+    textAlign: "center",
+    marginVertical: 15,
+    textShadowColor: "#000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  avatarJugador: {
+    width: 300,
+    height: 300,
+    borderRadius: 15,
+    marginBottom: 15,
+    borderWidth: 3,
+    borderColor: "#FFD700",
+  },
+  terminarButton: {
+    position: "absolute",
+    top: 40,
+    right: 25,
+    padding: 10,
+    zIndex: 10,
+  },
+  terminarText: {
+    color: "#FF4C61",
+    fontSize: 24,
+    fontWeight: "bold",
+  },
 });
