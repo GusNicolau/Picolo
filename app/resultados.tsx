@@ -1,14 +1,18 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
+  Animated, Easing,
   FlatList,
   Image,
   ImageBackground,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+
+
+
 
 const avatares: Record<string, any> = {
   Gustavo: require("../assets/moustache/gustavo.png"),
@@ -33,6 +37,32 @@ export default function ResultadosScreen() {
   const volverAJugadores = () => {
     router.push("/jugadores");
   };
+  const glowAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: false,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0,
+          duration: 1200,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: false,
+        }),
+      ])
+    ).start();
+  }, []);
+
+  const neonColor = glowAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#FF4500", "#FFD700"], // fuego → dorado
+  });
+
 
   return (
     <ImageBackground
@@ -60,12 +90,14 @@ export default function ResultadosScreen() {
                 style={styles.avatar}
               />
               <View style={{ flex: 1 }}>
-                <Text style={styles.playerName}>
+                <Animated.Text style={[styles.playerName, { textShadowColor: neonColor }]}>
                   {index + 1}. {nombre}
-                </Text>
+                </Animated.Text>
+
                 <Text style={styles.stats}>
-                  ✅ {stats.cumplidos}   ❌ {stats.fallos}
+                  🍺 {stats.cumplidos}   ✖ {stats.fallos}
                 </Text>
+
               </View>
             </View>
           )}
@@ -73,7 +105,7 @@ export default function ResultadosScreen() {
         />
 
         <TouchableOpacity style={styles.button} onPress={volverAJugadores}>
-          <Text style={styles.buttonText}>🔙 Volver a jugadores</Text>
+          <Text style={styles.buttonText}>Volver a jugadores</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -101,7 +133,7 @@ const styles = StyleSheet.create({
     textShadowColor: "#FF4500",
     textShadowOffset: { width: 3, height: 3 },
     textShadowRadius: 8,
-    marginTop: 50,
+    marginTop: 120,
     marginBottom: 40,
     textAlign: "center",
   },
@@ -138,30 +170,40 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   playerName: {
-    fontSize: 22,
+    textAlign: "center",
+    fontSize: 24,
     color: "#fff",
     fontWeight: "bold",
     marginBottom: 5,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 15,
   },
   stats: {
-    fontSize: 18,
+    textAlign: "center",
+    fontSize: 28,
     color: "#FFDDDD",
   },
   button: {
-    backgroundColor: "#FF4C61",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
+    marginTop: 30,
+    backgroundColor: "#8B0000",
+    borderColor: "#FF4C61",
+    borderWidth: 2,
+    paddingVertical: 16,
+    borderRadius: 12,
+    width: "100%",
     alignItems: "center",
-    justifyContent: "center",
+    elevation: 6,
     shadowColor: "#FF4C61",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.6,
-    shadowRadius: 8,
+    shadowOpacity: 0.8,
+    shadowRadius: 6,
+    marginBottom: 60,
   },
   buttonText: {
     fontSize: 20,
+    fontWeight: "900",
     color: "#fff",
-    fontWeight: "bold",
+    textTransform: "uppercase",
+    letterSpacing: 2,
   },
 });

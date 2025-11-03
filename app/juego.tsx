@@ -1,3 +1,4 @@
+import { Asset } from "expo-asset"; // <-- precarga imágenes
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -28,26 +29,75 @@ export default function JuegoScreen() {
   const translateX = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(1)).current;
 
+  // refs para el siguiente reto/jugador (precarga)
+  const nextRetoRef = useRef<string | null>(null);
+  const nextJugadorRef = useRef<Jugador | null>(null);
+
   useEffect(() => {
-    generarReto();
+    // Preparar primero y luego poner en pantalla — evita parpadeos
+    (async () => {
+      await prepararSiguiente();        // precarga next
+      aplicarSiguienteEnPantalla();     // setear current = next
+      prepararSiguiente();              // empezar a preparar el siguiente de nuevo
+    })();
   }, []);
 
-  const generarReto = () => {
-    if (!jugadores.length || !retos.length) {
-      setReto("");
-      setJugadorActual(null);
+  // Genera y precarga el siguiente reto/jugador en next*Ref
+  const prepararSiguiente = async () => {
+    if (!jugadores?.length || !retos?.length) {
+      nextRetoRef.current = "";
+      nextJugadorRef.current = null;
       return;
     }
 
     const jugadorRandom = jugadores[Math.floor(Math.random() * jugadores.length)];
     const retoAleatorio = retos[Math.floor(Math.random() * retos.length)];
-    setJugadorActual(jugadorRandom);
+    const texto = retoAleatorio.includes("{player}")
+      ? retoAleatorio.replace("{player}", jugadorRandom.nombre)
+      : retoAleatorio;
 
-    setReto(
-      retoAleatorio.includes("{player}")
-        ? retoAleatorio.replace("{player}", jugadorRandom.nombre)
-        : retoAleatorio
-    );
+    // precargar avatar si existe (local o remoto). Para local require no hace daño.
+    try {
+      const avatar = jugadorRandom.avatar || avatarPorDefecto;
+      // Asset.fromModule funciona con require(...) (local) y con módulos; para URLs usar Image.prefetch
+      if (typeof avatar === "number") {
+        // local require()
+        await Asset.fromModule(avatar).downloadAsync();
+      } else if (typeof avatar === "string") {
+        // url string
+        Image.prefetch(avatar);
+      }
+    } catch (e) {
+      // no crítico: si falla la precarga, seguimos (no hacemos nada)
+      console.warn("Precarga avatar fallida", e);
+    }
+
+    nextRetoRef.current = texto;
+    nextJugadorRef.current = jugadorRandom;
+  };
+
+  // Aplicar lo que hemos precargado (setear current desde nextRef)
+  const aplicarSiguienteEnPantalla = () => {
+    if (nextRetoRef.current === null || nextJugadorRef.current === null) {
+      // si no hay next preparado, generar al vuelo (fallback)
+      if (!jugadores?.length || !retos?.length) {
+        setReto("");
+        setJugadorActual(null);
+        return;
+      }
+      const jugadorRandom = jugadores[Math.floor(Math.random() * jugadores.length)];
+      const retoAleatorio = retos[Math.floor(Math.random() * retos.length)];
+      setJugadorActual(jugadorRandom);
+      setReto(retoAleatorio.includes("{player}") ? retoAleatorio.replace("{player}", jugadorRandom.nombre) : retoAleatorio);
+      return;
+    }
+
+    // seteamos current exactamente con lo que precargamos
+    setJugadorActual(nextJugadorRef.current);
+    setReto(nextRetoRef.current);
+    // limpiamos next (opcional)
+    nextRetoRef.current = null;
+    nextJugadorRef.current = null;
   };
 
   const registrarResultado = (cumplido: boolean) => {
@@ -65,21 +115,36 @@ export default function JuegoScreen() {
     });
   };
 
-  const handleSwipe = (cumplido: boolean) => {
+  const handleSwipe = async (cumplido: boolean) => {
     if (!jugadorActual) return;
 
+    // 1) registrar resultado del reto actual
+    registrarResultado(cumplido);
+
+    // 2) si ya tenemos next preparado, aplicarlo YA (antes de la animación de entrada)
+    if (nextRetoRef.current && nextJugadorRef.current) {
+      aplicarSiguienteEnPantalla();
+      // mientras mostramos la nueva carta, lanzamos la preparación del siguiente en background
+      prepararSiguiente().catch(() => {});
+    } else {
+      // fallback: preparar y aplicar si no hay next preparado
+      await prepararSiguiente();
+      aplicarSiguienteEnPantalla();
+      prepararSiguiente().catch(() => {});
+    }
+
+    // confeti
+    if (cumplido) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 1500);
+    }
+
+    // 3) animación: salida rápida y entrada con rebote
     Animated.parallel([
-      Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
-      Animated.timing(translateX, { toValue: cumplido ? -500 : 500, duration: 200, useNativeDriver: true }),
+      Animated.timing(opacity, { toValue: 0, duration: 130, useNativeDriver: true }),
+      Animated.timing(translateX, { toValue: cumplido ? -500 : 500, duration: 130, useNativeDriver: true }),
     ]).start(() => {
-      registrarResultado(cumplido);
-      generarReto();
-
-      if (cumplido) {
-        setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 1500);
-      }
-
+      // reset y entrada
       translateX.setValue(0);
       Animated.spring(opacity, { toValue: 1, useNativeDriver: true, friction: 5, tension: 60 }).start();
     });
@@ -106,14 +171,14 @@ export default function JuegoScreen() {
 
   const backgroundColor = translateX.interpolate({
     inputRange: [-500, 0, 500],
-    outputRange: ["#4CFF85", "#000000", "#FF4C61"],
+    outputRange: ["#c4fd5bff", "#000000", "#FF4C61"],
     extrapolate: "clamp",
   });
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ImageBackground
-        source={require("../assets/images/fuego-fondo.jpg")} // 🔥 fondo con llamas
+        source={require("../assets/images/fuego-fondo.jpg")}
         style={styles.background}
         resizeMode="cover"
       >
@@ -121,7 +186,7 @@ export default function JuegoScreen() {
           <BotonVolver />
 
           <TouchableOpacity style={styles.terminarButton} onPress={terminarPartida}>
-            <Text style={styles.terminarText}>X</Text>
+            <Text style={styles.terminarText}>✖</Text>
           </TouchableOpacity>
 
           <PanGestureHandler onGestureEvent={onGestureEvent} onEnded={onHandlerStateChange}>
@@ -145,11 +210,7 @@ export default function JuegoScreen() {
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  background: { flex: 1, justifyContent: "center", alignItems: "center" },
   overlay: {
     flex: 1,
     width: "100%",
@@ -181,40 +242,9 @@ const styles = StyleSheet.create({
     textShadowRadius: 6,
     marginBottom: 10,
   },
-  jugadorNombre: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-    marginVertical: 10,
-    textAlign: "center",
-  },
-  reto: {
-    fontSize: 22,
-    color: "#fff",
-    textAlign: "center",
-    marginVertical: 15,
-    textShadowColor: "#000",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
-  avatarJugador: {
-    width: 300,
-    height: 300,
-    borderRadius: 15,
-    marginBottom: 15,
-    borderWidth: 3,
-    borderColor: "#FFD700",
-  },
-  terminarButton: {
-    position: "absolute",
-    top: 40,
-    right: 25,
-    padding: 10,
-    zIndex: 10,
-  },
-  terminarText: {
-    color: "#FF4C61",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
+  jugadorNombre: { fontSize: 24, fontWeight: "bold", color: "#fff", marginVertical: 10, textAlign: "center" },
+  reto: { fontSize: 22, color: "#fff", textAlign: "center", marginVertical: 15, textShadowColor: "#000", textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 3 },
+  avatarJugador: { width: 300, height: 300, borderRadius: 15, marginBottom: 15, borderWidth: 3, borderColor: "#FFD700" },
+  terminarButton: { position: "absolute", top: 80, right: 25, padding: 10, zIndex: 10 },
+  terminarText: { color: "#FF4C61", fontSize: 34, fontWeight: "bold" },
 });

@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
     width: "70%",
     alignItems: "center",
     elevation: 6,
+    marginBottom: 60,
   },
   confirmText: {
     fontSize: 20,
