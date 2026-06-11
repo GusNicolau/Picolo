@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { usePlayers } from "../src/context/PlayersContext";
 
-const avatarPorDefecto = require("../assets/moustache/gustavo.png");
+const avatarPorDefecto = require("../assets/moustache/gustavo.webp");
 
 type StatsJugador = { cumplidos: number; fallos: number };
 
