@@ -9,29 +9,46 @@ import {
   View,
 } from "react-native";
 import { usePlayers } from "../src/context/PlayersContext";
+import { useSettings } from "../src/context/SettingsContext";
 
-const amigos = [
-  { nombre: "Sherco", imagen: require("../assets/moustache/gustavo.png") },
-  { nombre: "Carlota", imagen: require("../assets/moustache/carlos.png") },
-  { nombre: "Toffe", imagen: require("../assets/moustache/andreu.png") },
-  { nombre: "Mariojt72", imagen: require("../assets/moustache/mario.png") },
-  { nombre: "Calent", imagen: require("../assets/moustache/dani.png") },
-  { nombre: "Amerla", imagen: require("../assets/moustache/ale.png") },
-  { nombre: "Cigrona", imagen: require("../assets/moustache/lara.png") },
-  {
-    nombre: "Pantorrilla",
-    imagen: require("../assets/moustache/pantorrilla.png"),
-  },
-  { nombre: "Princesa", imagen: require("../assets/moustache/princesa.png") },
+const animales = [
+  { nombre: "Rana", imagen: require("../assets/avatares/rana.webp") },
+  { nombre: "Caballo", imagen: require("../assets/avatares/caballo.webp") },
+  { nombre: "Oveja", imagen: require("../assets/avatares/oveja.webp") },
+  { nombre: "Perro", imagen: require("../assets/avatares/perro.webp") },
+  { nombre: "Gata", imagen: require("../assets/avatares/gata.webp") },
 ];
 
-export default function MoustacheScreen() {
+const amigos = [
+  { nombre: "Sherco", imagen: require("../assets/moustache/gustavo.webp") },
+  { nombre: "Carlota", imagen: require("../assets/moustache/carlos.webp") },
+  { nombre: "Toffe", imagen: require("../assets/moustache/andreu.webp") },
+  { nombre: "Mariojt72", imagen: require("../assets/moustache/mario.webp") },
+  { nombre: "Calent", imagen: require("../assets/moustache/dani.webp") },
+  { nombre: "Amerla", imagen: require("../assets/moustache/ale.webp") },
+  { nombre: "Cigrona", imagen: require("../assets/moustache/lara.webp") },
+  {
+    nombre: "Pantorrilla",
+    imagen: require("../assets/moustache/pantorrilla.webp"),
+  },
+  { nombre: "Princesa", imagen: require("../assets/moustache/princesa.webp") },
+];
+
+const todos = [...animales, ...amigos];
+
+type Seccion = "animales" | "moustache";
+
+export default function AvataresScreen() {
   const router = useRouter();
   const { addJugador, jugadores } = usePlayers();
+  const { moustacheUnlocked } = useSettings();
+  const [seccion, setSeccion] = useState<Seccion>("animales");
   const [seleccionados, setSeleccionados] = useState<string[]>([]);
 
-  // Filtra los amigos que ya están seleccionados
-  const disponibles = amigos.filter(
+  const listaActual = seccion === "moustache" && moustacheUnlocked ? amigos : animales;
+
+  // Filtra los avatares que ya están en uso por un jugador existente
+  const disponibles = listaActual.filter(
     (a) => !jugadores.some((j) => j.nombre === a.nombre),
   );
 
@@ -45,15 +62,15 @@ export default function MoustacheScreen() {
 
   const confirmarSeleccion = () => {
     seleccionados.forEach((nombre) => {
-      const avatarData = amigos.find((a) => a.nombre === nombre);
+      const avatarData = todos.find((a) => a.nombre === nombre);
+      if (!avatarData) return;
 
-      const jugador = {
-        nombre, // nombre del jugador
-        avatar: avatarData?.imagen, // imagen del avatar
-        avatarName: avatarData?.nombre, // 👈 añadimos el nombre del avatar
-      };
-
-      addJugador(jugador);
+      addJugador({
+        nombre,
+        avatar: avatarData.imagen,
+        avatarName: avatarData.nombre,
+        genero: "inter",
+      });
     });
     router.replace("/jugadores");
   };
@@ -66,6 +83,43 @@ export default function MoustacheScreen() {
     >
       <View style={styles.overlay}>
         <Text style={styles.title}>Avatares</Text>
+
+        {moustacheUnlocked && (
+          <View style={styles.tabs}>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                seccion === "animales" && styles.tabButtonActive,
+              ]}
+              onPress={() => setSeccion("animales")}
+            >
+              <Text
+                style={[
+                  styles.tabButtonText,
+                  seccion === "animales" && styles.tabButtonTextActive,
+                ]}
+              >
+                Animales
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                seccion === "moustache" && styles.tabButtonActive,
+              ]}
+              onPress={() => setSeccion("moustache")}
+            >
+              <Text
+                style={[
+                  styles.tabButtonText,
+                  seccion === "moustache" && styles.tabButtonTextActive,
+                ]}
+              >
+                Moustache
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <FlatList
           data={disponibles}
@@ -121,6 +175,7 @@ const COLORS = {
   accent: "#F2A93B",
   accentOn: "#1C1408", // texto oscuro sobre botones de acento
   text: "#F5F5F7",
+  textMuted: "#9A9AA5",
 };
 
 const styles = StyleSheet.create({
@@ -142,8 +197,33 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: COLORS.text,
     letterSpacing: 0.3,
-    marginBottom: 24,
+    marginBottom: 16,
     textAlign: "center",
+  },
+  tabs: {
+    flexDirection: "row",
+    backgroundColor: COLORS.card,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+    padding: 4,
+    marginBottom: 20,
+  },
+  tabButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 9,
+  },
+  tabButtonActive: {
+    backgroundColor: COLORS.accent,
+  },
+  tabButtonText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: COLORS.textMuted,
+  },
+  tabButtonTextActive: {
+    color: COLORS.accentOn,
   },
   grid: {
     justifyContent: "center",
