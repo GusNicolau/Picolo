@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -27,6 +28,16 @@ export default function HomeScreen() {
       resizeMode="cover"
     >
       <View style={styles.overlay}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.settingsButton,
+            pressed && styles.buttonPressed,
+          ]}
+          onPress={() => router.push("/ajustes")}
+        >
+          <Ionicons name="settings-outline" size={26} color={COLORS.text} />
+        </Pressable>
+
         <Text style={styles.title}>PICOLO BATTLE</Text>
         <Text style={styles.subtitle}>Selecciona tu modo de combate</Text>
 
@@ -73,6 +84,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+  },
+  settingsButton: {
+    position: "absolute",
+    top: 60,
+    right: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderWidth: 1,
+    borderColor: COLORS.accentSoft,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
   },
   title: {
     fontSize: 38,
