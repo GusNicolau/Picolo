@@ -1,30 +1,23 @@
-import { useNavigation, useRouter, useSegments } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function BotonVolver() {
   const router = useRouter();
   const segments = useSegments();
-  const navigation = useNavigation();
 
   const handleBack = () => {
-    try {
-      // @ts-ignore
-      if (navigation?.canGoBack && navigation.canGoBack()) {
-        // @ts-ignore
-        navigation.goBack();
-        return;
-      }
-    } catch (e) {}
-
-    if (segments.length > 1) {
+    if (router.canGoBack()) {
       router.back();
       return;
     }
 
     const current = segments[segments.length - 1];
-    if (current === "avatares") {
-      router.replace("/jugadores");
-    } else if (current === "juego" || current === "resultados") {
+    if (
+      current === "avatares" ||
+      current === "ajustes" ||
+      current === "juego" ||
+      current === "resultados"
+    ) {
       router.replace("/jugadores");
     } else {
       router.push("/");
