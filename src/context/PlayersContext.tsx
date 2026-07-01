@@ -3,12 +3,14 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
 
 export type ModoJuego = "fiesta" | "hot";
 export type NavDirection = "forward" | "backward";
+export type Genero = "hombre" | "mujer" | "inter";
 
 // Definimos el tipo Jugador con avatar y avatarName opcionales
 export type Jugador = {
   nombre: string;
   avatar?: any;       // require(...) result
   avatarName?: string; // ej. "Gustavo", "Mario"
+  genero?: Genero;
 };
 
 type PlayersContextType = {

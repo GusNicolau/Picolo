@@ -1,5 +1,6 @@
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -12,33 +13,52 @@ import {
   View
 } from "react-native";
 
+import { useSettings } from "../src/context/SettingsContext";
 
 
 
 
 
 
-import { Jugador, usePlayers } from "../src/context/PlayersContext";
+import { Genero, Jugador, usePlayers } from "../src/context/PlayersContext";
 
-// Mapa de avatares de amigos predefinidos
+const generoOpciones: {
+  key: Genero;
+  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  colorSeleccionado: string;
+  iconColorSeleccionado: string;
+}[] = [
+  { key: "hombre", icon: "gender-male", colorSeleccionado: "#3E7BFA", iconColorSeleccionado: "#FFFFFF" },
+  { key: "mujer", icon: "gender-female", colorSeleccionado: "#F2578F", iconColorSeleccionado: "#FFFFFF" },
+  { key: "inter", icon: "gender-non-binary", colorSeleccionado: "#F2A93B", iconColorSeleccionado: "#1C1408" },
+];
+
+// Mapa de avatares de amigos predefinidos (requiere el código "moustache" para desbloquearse)
 const avataresAmigos: Record<string, any> = {
-  Sherco: require("../assets/moustache/gustavo.png"),
-  Carlota: require("../assets/moustache/carlos.png"),
-  Toffe: require("../assets/moustache/andreu.png"),
-  Mariojt72: require("../assets/moustache/mario.png"),
-  Calent: require("../assets/moustache/dani.png"),
-  Amerla: require("../assets/moustache/ale.png"),
-  Cigrona: require("../assets/moustache/lara.png"),
-  Pantorrilla: require("../assets/moustache/pantorrilla.png"),
-  Princesa: require("../assets/moustache/princesa.png"),
+  Sherco: require("../assets/moustache/gustavo.webp"),
+  Carlota: require("../assets/moustache/carlos.webp"),
+  Toffe: require("../assets/moustache/andreu.webp"),
+  Mariojt72: require("../assets/moustache/mario.webp"),
+  Calent: require("../assets/moustache/dani.webp"),
+  Amerla: require("../assets/moustache/ale.webp"),
+  Cigrona: require("../assets/moustache/lara.webp"),
+  Pantorrilla: require("../assets/moustache/pantorrilla.webp"),
+  Princesa: require("../assets/moustache/princesa.webp"),
 };
 
-// Pool de avatares disponibles (amigos predefinidos)
-const AVATARES: any[] = Object.values(avataresAmigos);
+// Pool de avatares disponibles por defecto (animales, sin desbloquear nada)
+const avataresAnimales: any[] = [
+  require("../assets/avatares/rana.webp"),
+  require("../assets/avatares/caballo.webp"),
+  require("../assets/avatares/oveja.webp"),
+  require("../assets/avatares/perro.webp"),
+  require("../assets/avatares/gata.webp"),
+];
 
 export default function JugadoresScreen() {
   const [nombre, setNombre] = useState("");
   const { jugadores, addJugador, editJugador, setJugadores } = usePlayers();
+  const { moustacheUnlocked } = useSettings();
   const router = useRouter();
 
   // Edición de nombre in-line
@@ -47,6 +67,15 @@ export default function JugadoresScreen() {
 
   // Edición de avatar mediante modal
   const [editingAvatar, setEditingAvatar] = useState<string | null>(null);
+
+  // Los avatares de amigos solo entran al pool si el código "moustache" se ha canjeado
+  const AVATARES = useMemo(
+    () =>
+      moustacheUnlocked
+        ? [...avataresAnimales, ...Object.values(avataresAmigos)]
+        : avataresAnimales,
+    [moustacheUnlocked]
+  );
 
   const elegirAvatarAleatorio = () => {
     const usados = jugadores.map((j) => j.avatar);
@@ -64,13 +93,14 @@ export default function JugadoresScreen() {
       return;
     }
 
-    const avatarAmigo = avataresAmigos[trimmed];
+    const avatarAmigo = moustacheUnlocked ? avataresAmigos[trimmed] : undefined;
     const avataresUsados = jugadores.map((j) => j.avatar);
     const avatarAmigoDisponible = avatarAmigo && !avataresUsados.includes(avatarAmigo);
     const nuevoJugador: Jugador = {
       nombre: trimmed,
       avatar: avatarAmigoDisponible ? avatarAmigo : elegirAvatarAleatorio(),
       avatarName: avatarAmigoDisponible ? trimmed : undefined,
+      genero: "inter",
     };
     addJugador(nuevoJugador);
     setNombre("");
@@ -99,6 +129,10 @@ export default function JugadoresScreen() {
     setEditingName(null);
   };
 
+  const seleccionarGenero = (nombreJugador: string, genero: Genero) => {
+    editJugador(nombreJugador, { genero });
+  };
+
   const confirmarCambioAvatar = (nombreJugador: string, nuevoAvatar: any) => {
     const enUsoPorOtro = jugadores.some(
       (j) => j.nombre !== nombreJugador && j.avatar === nuevoAvatar
@@ -119,6 +153,13 @@ export default function JugadoresScreen() {
       resizeMode="cover"
     >
       <View style={styles.overlay}>
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={() => router.push("/ajustes")}
+        >
+          <Ionicons name="settings-outline" size={22} color={COLORS.text} />
+        </TouchableOpacity>
+
         <Text style={styles.title}>Añadir jugadores</Text>
 
         <View style={styles.inputContainer}>
@@ -137,9 +178,9 @@ export default function JugadoresScreen() {
 
         <TouchableOpacity
           style={styles.moustacheButton}
-          onPress={() => router.push("/moustache")}
+          onPress={() => router.push("/avatares")}
         >
-          <Text style={styles.moustacheButtonText}>Moustache</Text>
+          <Text style={styles.moustacheButtonText}>Avatares</Text>
         </TouchableOpacity>
 
 
@@ -149,36 +190,63 @@ export default function JugadoresScreen() {
           style={styles.list}
           renderItem={({ item }) => (
             <View style={styles.playerContainer}>
-              <TouchableOpacity onPress={() => setEditingAvatar(item.nombre)}>
-                <Image source={item.avatar || avataresAmigos["Sherco"]} style={styles.avatar} />
-                <View style={styles.avatarEditBadge}>
-                  <Text style={styles.avatarEditBadgeText}>✏️</Text>
-                </View>
-              </TouchableOpacity>
-
-              {editingName === item.nombre ? (
-                <TextInput
-                  style={styles.playerNameInput}
-                  value={editingValue}
-                  onChangeText={setEditingValue}
-                  onBlur={() => confirmarEdicionNombre(item.nombre)}
-                  onSubmitEditing={() => confirmarEdicionNombre(item.nombre)}
-                  autoFocus
-                  maxLength={20}
-                  selectTextOnFocus
-                  textAlign="center"
-                />
-              ) : (
-                <TouchableOpacity style={styles.nameWrapper} onPress={() => empezarEdicionNombre(item.nombre)}>
-                  <Text style={styles.player} numberOfLines={1} ellipsizeMode="tail">
-                    {item.nombre}
-                  </Text>
+              <View style={styles.playerTopRow}>
+                <TouchableOpacity onPress={() => setEditingAvatar(item.nombre)}>
+                  <Image source={item.avatar || avataresAnimales[0]} style={styles.avatar} />
+                  <View style={styles.avatarEditBadge}>
+                    <Text style={styles.avatarEditBadgeText}>✏️</Text>
+                  </View>
                 </TouchableOpacity>
-              )}
 
-              <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarJugador(item.nombre)}>
-                <Text style={styles.delete}>✕</Text>
-              </TouchableOpacity>
+                {editingName === item.nombre ? (
+                  <TextInput
+                    style={styles.playerNameInput}
+                    value={editingValue}
+                    onChangeText={setEditingValue}
+                    onBlur={() => confirmarEdicionNombre(item.nombre)}
+                    onSubmitEditing={() => confirmarEdicionNombre(item.nombre)}
+                    autoFocus
+                    maxLength={20}
+                    selectTextOnFocus
+                    textAlign="center"
+                  />
+                ) : (
+                  <TouchableOpacity style={styles.nameWrapper} onPress={() => empezarEdicionNombre(item.nombre)}>
+                    <Text style={styles.player} numberOfLines={1} ellipsizeMode="tail">
+                      {item.nombre}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
+                <View style={styles.generoRow}>
+                  {generoOpciones.map((opcion) => {
+                    const isSelected = (item.genero ?? "inter") === opcion.key;
+                    return (
+                      <TouchableOpacity
+                        key={opcion.key}
+                        style={[
+                          styles.generoButton,
+                          isSelected && {
+                            backgroundColor: opcion.colorSeleccionado,
+                            borderColor: opcion.colorSeleccionado,
+                          },
+                        ]}
+                        onPress={() => seleccionarGenero(item.nombre, opcion.key)}
+                      >
+                        <MaterialCommunityIcons
+                          name={opcion.icon}
+                          size={16}
+                          color={isSelected ? opcion.iconColorSeleccionado : COLORS.textMuted}
+                        />
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
+                <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarJugador(item.nombre)}>
+                  <Text style={styles.delete}>✕</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         />
@@ -267,6 +335,20 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
   },
+  settingsButton: {
+    position: "absolute",
+    top: 60,
+    right: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderWidth: 1,
+    borderColor: COLORS.accentSoft,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+  },
   title: {
     fontSize: 26,
     color: COLORS.text,
@@ -327,16 +409,36 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   playerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     backgroundColor: COLORS.card,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 14,
     marginBottom: 10,
-    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
+  },
+  playerTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  generoRow: {
+    flexDirection: "row",
+    gap: 6,
+    marginHorizontal: 8,
+  },
+  generoButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  generoButtonSelected: {
+    backgroundColor: COLORS.accent,
+    borderColor: COLORS.accent,
   },
   nameWrapper: {
     flex: 1,
