@@ -15,7 +15,13 @@ import {
 
 import { useSettings } from "../src/context/SettingsContext";
 
-import { Jugador, usePlayers } from "../src/context/PlayersContext";
+import { Genero, Jugador, usePlayers } from "../src/context/PlayersContext";
+
+const generoOpciones: { key: Genero; label: string }[] = [
+  { key: "hombre", label: "Hombre" },
+  { key: "mujer", label: "Mujer" },
+  { key: "inter", label: "Inter" },
+];
 
 // Mapa de avatares de amigos predefinidos (requiere el código "moustache" para desbloquearse)
 const avataresAmigos: Record<string, any> = {
@@ -84,6 +90,7 @@ export default function JugadoresScreen() {
       nombre: trimmed,
       avatar: avatarAmigoDisponible ? avatarAmigo : elegirAvatarAleatorio(),
       avatarName: avatarAmigoDisponible ? trimmed : undefined,
+      genero: "inter",
     };
     addJugador(nuevoJugador);
     setNombre("");
@@ -110,6 +117,10 @@ export default function JugadoresScreen() {
     }
     editJugador(nombreActual, { nombre: trimmed });
     setEditingName(null);
+  };
+
+  const seleccionarGenero = (nombreJugador: string, genero: Genero) => {
+    editJugador(nombreJugador, { genero });
   };
 
   const confirmarCambioAvatar = (nombreJugador: string, nuevoAvatar: any) => {
@@ -169,36 +180,60 @@ export default function JugadoresScreen() {
           style={styles.list}
           renderItem={({ item }) => (
             <View style={styles.playerContainer}>
-              <TouchableOpacity onPress={() => setEditingAvatar(item.nombre)}>
-                <Image source={item.avatar || avataresAnimales[0]} style={styles.avatar} />
-                <View style={styles.avatarEditBadge}>
-                  <Text style={styles.avatarEditBadgeText}>✏️</Text>
-                </View>
-              </TouchableOpacity>
-
-              {editingName === item.nombre ? (
-                <TextInput
-                  style={styles.playerNameInput}
-                  value={editingValue}
-                  onChangeText={setEditingValue}
-                  onBlur={() => confirmarEdicionNombre(item.nombre)}
-                  onSubmitEditing={() => confirmarEdicionNombre(item.nombre)}
-                  autoFocus
-                  maxLength={20}
-                  selectTextOnFocus
-                  textAlign="center"
-                />
-              ) : (
-                <TouchableOpacity style={styles.nameWrapper} onPress={() => empezarEdicionNombre(item.nombre)}>
-                  <Text style={styles.player} numberOfLines={1} ellipsizeMode="tail">
-                    {item.nombre}
-                  </Text>
+              <View style={styles.playerTopRow}>
+                <TouchableOpacity onPress={() => setEditingAvatar(item.nombre)}>
+                  <Image source={item.avatar || avataresAnimales[0]} style={styles.avatar} />
+                  <View style={styles.avatarEditBadge}>
+                    <Text style={styles.avatarEditBadgeText}>✏️</Text>
+                  </View>
                 </TouchableOpacity>
-              )}
 
-              <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarJugador(item.nombre)}>
-                <Text style={styles.delete}>✕</Text>
-              </TouchableOpacity>
+                {editingName === item.nombre ? (
+                  <TextInput
+                    style={styles.playerNameInput}
+                    value={editingValue}
+                    onChangeText={setEditingValue}
+                    onBlur={() => confirmarEdicionNombre(item.nombre)}
+                    onSubmitEditing={() => confirmarEdicionNombre(item.nombre)}
+                    autoFocus
+                    maxLength={20}
+                    selectTextOnFocus
+                    textAlign="center"
+                  />
+                ) : (
+                  <TouchableOpacity style={styles.nameWrapper} onPress={() => empezarEdicionNombre(item.nombre)}>
+                    <Text style={styles.player} numberOfLines={1} ellipsizeMode="tail">
+                      {item.nombre}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
+                <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarJugador(item.nombre)}>
+                  <Text style={styles.delete}>✕</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.generoRow}>
+                {generoOpciones.map((opcion) => {
+                  const isSelected = item.genero === opcion.key;
+                  return (
+                    <TouchableOpacity
+                      key={opcion.key}
+                      style={[styles.generoButton, isSelected && styles.generoButtonSelected]}
+                      onPress={() => seleccionarGenero(item.nombre, opcion.key)}
+                    >
+                      <Text
+                        style={[
+                          styles.generoButtonText,
+                          isSelected && styles.generoButtonTextSelected,
+                        ]}
+                      >
+                        {opcion.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
             </View>
           )}
         />
@@ -361,16 +396,45 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   playerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     backgroundColor: COLORS.card,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 14,
     marginBottom: 10,
-    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
+  },
+  playerTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  generoRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 10,
+  },
+  generoButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  generoButtonSelected: {
+    backgroundColor: COLORS.accent,
+    borderColor: COLORS.accent,
+  },
+  generoButtonText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: COLORS.textMuted,
+    letterSpacing: 0.2,
+  },
+  generoButtonTextSelected: {
+    color: COLORS.accentOn,
   },
   nameWrapper: {
     flex: 1,
