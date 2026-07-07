@@ -1,5 +1,5 @@
 [
-  "{player} envía un mensaje atrevido",
-  "Todos eligen a alguien y le hacen un piropo",
-  "{player} muestra un secreto"
+  { "texto": "{player} envía un mensaje atrevido" },
+  { "texto": "Todos eligen a alguien y le hacen un piropo" },
+  { "texto": "{player} muestra un secreto" }
 ]
