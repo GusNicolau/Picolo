@@ -22,7 +22,7 @@ import BotonVolver from "../src/components/BotonVolver";
 import { Jugador, usePlayers } from "../src/context/PlayersContext";
 import { obtenerRetos } from "../src/controllers/retosController";
 
-const avatarPorDefecto = require("../assets/moustache/gustavo.png");
+const avatarPorDefecto = require("../assets/moustache/gustavo.webp");
 
 // Distancia mínima de arrastre para aceptar/rechazar el reto (evita que un
 // gesto pequeño se confunda con un swipe intencionado)
@@ -33,11 +33,13 @@ export default function JuegoScreen() {
   const { jugadores, modo } = usePlayers();
   const [reto, setReto] = useState<string>("");
   const [jugadorActual, setJugadorActual] = useState<Jugador | null>(null);
+  const [jugadorActual2, setJugadorActual2] = useState<Jugador | null>(null);
   const [resultados, setResultados] = useState<
     Record<string, { cumplidos: number; fallos: number }>
   >({});
+  const [juegoTerminado, setJuegoTerminado] = useState(false);
 
-  const retos = obtenerRetos(modo);
+  const retos = obtenerRetos(modo, jugadores);
   const [translateX] = useState(() => new Animated.Value(0));
   const [opacity] = useState(() => new Animated.Value(1));
   // 🏆 Racha y animación cerveza
@@ -99,69 +101,133 @@ export default function JuegoScreen() {
   // refs para el siguiente reto/jugador (precarga)
   const nextRetoRef = useRef<string | null>(null);
   const nextJugadorRef = useRef<Jugador | null>(null);
+  const nextJugador2Ref = useRef<Jugador | null>(null);
+  // true cuando ya no queda ningún reto sin repetir preparado para el siguiente turno
+  const nextFinRef = useRef(false);
+  // ids de los retos que ya han salido en esta partida, para no repetirlos
+  const retosUsadosRef = useRef<Set<number>>(new Set());
 
-  // Genera y precarga el siguiente reto/jugador en next*Ref
-  const prepararSiguiente = async () => {
-    if (!jugadores?.length || !retos?.length) {
-      nextRetoRef.current = "";
-      nextJugadorRef.current = null;
-      return;
-    }
+  const retosDisponibles = () =>
+    retos.filter((r) => !retosUsadosRef.current.has(r.id));
 
-    const jugadorRandom =
-      jugadores[Math.floor(Math.random() * jugadores.length)];
-    const retoAleatorio = retos[Math.floor(Math.random() * retos.length)];
-    const texto = retoAleatorio.includes("{player}")
-      ? retoAleatorio.replace("{player}", jugadorRandom.nombre)
-      : retoAleatorio;
+  // Sortea el jugador que protagoniza un reto. Si el reto exige un género
+  // concreto (ej. "Las chicas beben"), se sortea solo entre esos jugadores.
+  const elegirJugadorParaReto = (reto: (typeof retos)[number]) => {
+    const pool = reto.genero
+      ? jugadores.filter((j) => (j.genero ?? "inter") === reto.genero)
+      : jugadores;
+    const candidatos = pool.length > 0 ? pool : jugadores;
+    return candidatos[Math.floor(Math.random() * candidatos.length)];
+  };
 
-    // precargar avatar si existe (local o remoto). Para local require no hace daño.
+  // Sortea un segundo jugador distinto del primero, para retos de pareja
+  // (ej. "{player} y {player2} se tienen que besar").
+  const elegirSegundoJugador = (excluir: Jugador) => {
+    const candidatos = jugadores.filter((j) => j.nombre !== excluir.nombre);
+    if (candidatos.length === 0) return null;
+    return candidatos[Math.floor(Math.random() * candidatos.length)];
+  };
+
+  // Precarga el avatar de un jugador (local o remoto) para que no haya
+  // parpadeo al mostrarlo en la tarjeta.
+  const precargarAvatar = async (jugador: Jugador) => {
     try {
-      const avatar = jugadorRandom.avatar || avatarPorDefecto;
-      // Asset.fromModule funciona con require(...) (local) y con módulos; para URLs usar Image.prefetch
+      const avatar = jugador.avatar || avatarPorDefecto;
       if (typeof avatar === "number") {
-        // local require()
         await Asset.fromModule(avatar).downloadAsync();
       } else if (typeof avatar === "string") {
-        // url string
         Image.prefetch(avatar);
       }
     } catch (e) {
       // no crítico: si falla la precarga, seguimos (no hacemos nada)
       console.warn("Precarga avatar fallida", e);
     }
+  };
+
+  // Sustituye {player} y, si el reto lo pide, {player2} por los nombres
+  // de los jugadores sorteados.
+  const construirTexto = (
+    retoTexto: string,
+    jugador1: Jugador,
+    jugador2: Jugador | null
+  ) => {
+    let texto = retoTexto.includes("{player}")
+      ? retoTexto.replace("{player}", jugador1.nombre)
+      : retoTexto;
+    if (jugador2 && texto.includes("{player2}")) {
+      texto = texto.replace("{player2}", jugador2.nombre);
+    }
+    return texto;
+  };
+
+  // Genera y precarga el siguiente reto/jugador(es) en next*Ref. Cada reto
+  // sorteado se marca como usado en el momento en que se prepara, para que
+  // no pueda volver a salir en esta partida.
+  const prepararSiguiente = async () => {
+    const disponibles = retosDisponibles();
+    if (!jugadores?.length || disponibles.length === 0) {
+      nextRetoRef.current = null;
+      nextJugadorRef.current = null;
+      nextJugador2Ref.current = null;
+      nextFinRef.current = true;
+      return;
+    }
+    nextFinRef.current = false;
+
+    const retoAleatorio = disponibles[Math.floor(Math.random() * disponibles.length)];
+    retosUsadosRef.current.add(retoAleatorio.id);
+
+    const jugadorRandom = elegirJugadorParaReto(retoAleatorio);
+    const requiereSegundo = retoAleatorio.texto.includes("{player2}");
+    const jugador2Random = requiereSegundo
+      ? elegirSegundoJugador(jugadorRandom)
+      : null;
+    const texto = construirTexto(retoAleatorio.texto, jugadorRandom, jugador2Random);
+
+    await precargarAvatar(jugadorRandom);
+    if (jugador2Random) await precargarAvatar(jugador2Random);
 
     nextRetoRef.current = texto;
     nextJugadorRef.current = jugadorRandom;
+    nextJugador2Ref.current = jugador2Random;
   };
 
-  // Aplicar lo que hemos precargado (setear current desde nextRef)
+  // Aplicar lo que hemos precargado (setear current desde nextRef). Si ya
+  // no quedan retos sin repetir, termina la partida en vez de mostrar carta.
   const aplicarSiguienteEnPantalla = () => {
+    if (nextFinRef.current) {
+      setJuegoTerminado(true);
+      return;
+    }
+
     if (nextRetoRef.current === null || nextJugadorRef.current === null) {
       // si no hay next preparado, generar al vuelo (fallback)
-      if (!jugadores?.length || !retos?.length) {
-        setReto("");
-        setJugadorActual(null);
+      const disponibles = retosDisponibles();
+      if (!jugadores?.length || disponibles.length === 0) {
+        setJuegoTerminado(true);
         return;
       }
-      const jugadorRandom =
-        jugadores[Math.floor(Math.random() * jugadores.length)];
-      const retoAleatorio = retos[Math.floor(Math.random() * retos.length)];
+      const retoAleatorio = disponibles[Math.floor(Math.random() * disponibles.length)];
+      retosUsadosRef.current.add(retoAleatorio.id);
+      const jugadorRandom = elegirJugadorParaReto(retoAleatorio);
+      const requiereSegundo = retoAleatorio.texto.includes("{player2}");
+      const jugador2Random = requiereSegundo
+        ? elegirSegundoJugador(jugadorRandom)
+        : null;
       setJugadorActual(jugadorRandom);
-      setReto(
-        retoAleatorio.includes("{player}")
-          ? retoAleatorio.replace("{player}", jugadorRandom.nombre)
-          : retoAleatorio,
-      );
+      setJugadorActual2(jugador2Random);
+      setReto(construirTexto(retoAleatorio.texto, jugadorRandom, jugador2Random));
       return;
     }
 
     // seteamos current exactamente con lo que precargamos
     setJugadorActual(nextJugadorRef.current);
+    setJugadorActual2(nextJugador2Ref.current);
     setReto(nextRetoRef.current);
     // limpiamos next (opcional)
     nextRetoRef.current = null;
     nextJugadorRef.current = null;
+    nextJugador2Ref.current = null;
   };
 
   useEffect(() => {
@@ -175,15 +241,31 @@ export default function JuegoScreen() {
 
   useEffect(() => {
     // Cada vez que entra un jugador nuevo, la jarra de su racha personal
-    // tiembla según lo alta que la traiga
+    // tiembla según lo alta que la traiga (en retos dobles, según la racha
+    // más alta de los dos protagonistas)
     shakeIndividualAnim.stopAnimation();
     shakeIndividualAnim.setValue(0);
-    if (jugadorActual) {
-      const nivel = rachasIndividuales[jugadorActual.nombre] || 0;
-      if (nivel > 0) dispararShake(shakeIndividualAnim, nivel);
-    }
+    const nivel1 = jugadorActual ? rachasIndividuales[jugadorActual.nombre] || 0 : 0;
+    const nivel2 = jugadorActual2 ? rachasIndividuales[jugadorActual2.nombre] || 0 : 0;
+    const nivel = Math.max(nivel1, nivel2);
+    if (nivel > 0) dispararShake(shakeIndividualAnim, nivel);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jugadorActual]);
+  }, [jugadorActual, jugadorActual2]);
+
+  // Insignia de racha individual (jarra + número) para un jugador, o null si
+  // no lleva racha en marcha
+  const renderRachaBadge = (nombreJugador: string, doble = false) => {
+    const nivel = rachasIndividuales[nombreJugador] || 0;
+    if (!nivel) return null;
+    return (
+      <View style={[styles.rachaIndividualBadge, doble && styles.rachaIndividualBadgeDoble]}>
+        <Animated.View style={{ transform: [{ rotate: shakeIndividual }] }}>
+          <FontAwesome5 name="beer" size={14} color="#1C1408" />
+        </Animated.View>
+        <Text style={styles.rachaIndividualText}> ✖{nivel}</Text>
+      </View>
+    );
+  };
 
   const registrarResultado = (cumplido: boolean) => {
     if (!jugadorActual) return;
@@ -341,6 +423,14 @@ export default function JuegoScreen() {
     });
   };
 
+  useEffect(() => {
+    // Cuando ya no quedan retos sin repetir, se acaba la partida sola
+    if (juegoTerminado) {
+      terminarPartida();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [juegoTerminado]);
+
   const rotate = translateX.interpolate({
     inputRange: [-300, 0, 300],
     outputRange: ["-40deg", "0deg", "40deg"],
@@ -412,7 +502,43 @@ export default function JuegoScreen() {
                 <View>
                   <Text style={styles.title}>RETO ACTUAL</Text>
 
-                  {jugadorActual && (
+                  {jugadorActual && jugadorActual2 && (
+                    <View style={styles.doblePlayerRow}>
+                      <View style={styles.doblePlayerBlock}>
+                        <Image
+                          source={jugadorActual.avatar || avatarPorDefecto}
+                          style={styles.avatarJugadorDoble}
+                        />
+                        <Text
+                          style={styles.jugadorNombreDoble}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        >
+                          {jugadorActual.nombre}
+                        </Text>
+                        {renderRachaBadge(jugadorActual.nombre, true)}
+                      </View>
+
+                      <Text style={styles.dobleConector}>+</Text>
+
+                      <View style={styles.doblePlayerBlock}>
+                        <Image
+                          source={jugadorActual2.avatar || avatarPorDefecto}
+                          style={styles.avatarJugadorDoble}
+                        />
+                        <Text
+                          style={styles.jugadorNombreDoble}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        >
+                          {jugadorActual2.nombre}
+                        </Text>
+                        {renderRachaBadge(jugadorActual2.nombre, true)}
+                      </View>
+                    </View>
+                  )}
+
+                  {jugadorActual && !jugadorActual2 && (
                     <View style={{ alignItems: "center" }}>
                       <Image
                         source={jugadorActual.avatar || avatarPorDefecto}
@@ -422,23 +548,7 @@ export default function JuegoScreen() {
                         <Text style={styles.jugadorNombre}>
                           {jugadorActual.nombre}
                         </Text>
-                        {!!rachasIndividuales[jugadorActual.nombre] && (
-                          <View style={styles.rachaIndividualBadge}>
-                            <Animated.View
-                              style={{ transform: [{ rotate: shakeIndividual }] }}
-                            >
-                              <FontAwesome5
-                                name="beer"
-                                size={14}
-                                color="#1C1408"
-                              />
-                            </Animated.View>
-                            <Text style={styles.rachaIndividualText}>
-                              {" "}
-                              ✖{rachasIndividuales[jugadorActual.nombre]}
-                            </Text>
-                          </View>
-                        )}
+                        {renderRachaBadge(jugadorActual.nombre)}
                       </View>
                     </View>
                   )}
@@ -510,6 +620,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
+  rachaIndividualBadgeDoble: {
+    marginLeft: 0,
+    marginTop: 6,
+  },
   rachaIndividualText: {
     color: "#1C1408",
     fontSize: 14,
@@ -531,6 +645,36 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderWidth: 2,
     borderColor: COLORS.cardBorder,
+  },
+  doblePlayerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 15,
+  },
+  doblePlayerBlock: {
+    alignItems: "center",
+    width: 130,
+  },
+  avatarJugadorDoble: {
+    width: 130,
+    height: 130,
+    borderRadius: 15,
+    marginBottom: 8,
+    borderWidth: 2,
+    borderColor: COLORS.cardBorder,
+  },
+  jugadorNombreDoble: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
+  },
+  dobleConector: {
+    fontSize: 26,
+    fontWeight: "900",
+    color: COLORS.accent,
+    marginHorizontal: 10,
   },
   terminarButton: {
     position: "absolute",
