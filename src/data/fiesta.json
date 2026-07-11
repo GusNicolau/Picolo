@@ -1,57 +1,173 @@
 [
-  "🍺 {player} tiene que beber 2 tragos",
-  "🔥 Los chicos beben 2 tragos",
-  "😂 Todos los que lleven gafas beben 1 trago",
-  "👉 {player} reparte 2 tragos",
-  "😈 {player} elige quién bebe 3 tragos",
-  "🍺 {player} tiene que beber 2 tragos",
-  "🔥 Las chicas beben 2 tragos",
-  "🔥 Los chicos beben 2 tragos",
-  "😂 Todos los que lleven camiseta oscura beben 1 trago",
-  "👉 {player} reparte 2 tragos entre quien quiera",
-  "😈 {player} elige quién bebe 3 tragos",
-  "🙌 Todos los solteros beben 1 trago",
-  "💔 Todos los que tengan pareja beben 1 trago",
-  "🧠 {player} tiene que decir el abecedario del tirón o bebe 3 tragos",
-  "🖐️ Los últimos 2 en tocar la mesa beben 2 tragos",
-  "🎯 {player} elige a alguien para hacer 10 flexiones o beber 2 tragos",
-  "🤐 {player} no puede hablar durante 2 rondas o bebe 3 tragos",
-  "🔄 Se cambia el sentido del juego y {player} bebe 1 trago",
-  "🍻 Todos brindan y beben 1 trago",
-  "👀 El último en mirar a los ojos a {player} bebe 1 trago",
-  "😜 El resto del grupo elige a quién y qué le manda {player} por mensaje, o se acaba la copa",
-  "🍺 {player} elige a 3 personas para que beban juntas",
-  "😜 {player} imita a otro jugador; si nadie adivina a quién, bebe 3 tragos",
-  "🎉 Ronda especial: todos beben 1 trago",
-  "🤫 {player} tiene que contar un secreto o bebe 3 tragos",
-  "🧊 {player} aguanta la respiración 15 segundos o bebe 2 tragos",
-  "🍹 {player} tiene que beber de la copa de la persona que elija",
-  "😈 {player} bebe 3 tragos sin usar las manos",
-  "🔥 {player} tiene que hacer lo que diga el jugador a su derecha durante 3 rondas o bebe 3 tragos",
-  "🥵 {player} se moja con hielo o bebe 3 tragos",
-  "😭 {player} cuenta la anécdota más vergonzosa que tenga o bebe 3 tragos",
-  "🤢 {player} mezcla su bebida con la de otro jugador y se la bebe",
-  "🔒 {player} no puede beber en las próximas 3 rondas aunque le toque",
-  "👑 {player} es el \"rey/reina\" durante 3 rondas: todos le obedecen o beben 3 tragos",
-  "🎭 {player} tiene que hablar con acento random hasta su próximo turno o bebe 3 tragos",
-  "🥴 {player} bebe 3 tragos con los ojos cerrados",
-  "🍷 {player} se acaba la copa entera",
-  "🎯 {player} elige a alguien para que se acabe la copa",
-  "🍻 El jugador con la racha más baja se acaba la copa",
-  "🎤 {player} canta una canción y el resto tiene que adivinar cuál es; si no aciertan, bebe 2 tragos",
-  "🕺 {player} tiene que bailar sin música durante 20 segundos o bebe 2 tragos",
-  "📸 {player} tiene que sacarse una foto ahora mismo y subirla a Instagram, o bebe 2 tragos",
-  "🤔 {player} responde una pregunta incómoda que le hagan o bebe 2 tragos",
-  "🎭 {player} imita a un famoso y el resto adivina quién es; si nadie acierta bebe 2 tragos",
-  "🙋 Todos los que hayan nacido en verano beben 1 trago",
-  "🙋 Todos los que hayan nacido en invierno beben 1 trago",
-  "🔁 Se invierte el turno: el jugador anterior vuelve a beber 1 trago",
-  "🥇 El jugador más alto del grupo bebe 2 tragos",
-  "🥈 El jugador más bajo del grupo bebe 2 tragos",
-  "🎲 Todos compiten a piedra, papel o tijera; el que pierda bebe 1 trago",
-  "🗣️ {player} tiene que repetir todo lo que diga la persona de su derecha durante 2 rondas, o bebe 2 tragos",
-  "🧩 {player} tiene que decir 5 palabras que empiecen por la misma letra en 10 segundos o bebe",
-  "👯 {player} elige a otro jugador para brindar juntos 2 tragos",
-  "🚫 A partir de ahora nadie puede decir el nombre de {player}; quien lo diga bebe 2 tragos",
-  "🤳 {player} llama a alguien de su lista de contactos y le dice algo random o bebe 2 tragos"
+  {
+    "texto": "🍺 {player} tiene que beber 2 tragos"
+  },
+  {
+    "texto": "🔥 Los chicos beben 2 tragos",
+    "genero": "hombre"
+  },
+  {
+    "texto": "😂 Todos los que lleven gafas beben 1 trago"
+  },
+  {
+    "texto": "👉 {player} reparte 2 tragos"
+  },
+  {
+    "texto": "😈 {player} elige quién bebe 3 tragos"
+  },
+  {
+    "texto": "🍺 {player} tiene que beber 2 tragos"
+  },
+  {
+    "texto": "🔥 Las chicas beben 2 tragos",
+    "genero": "mujer"
+  },
+  {
+    "texto": "🔥 Los chicos beben 2 tragos",
+    "genero": "hombre"
+  },
+  {
+    "texto": "😂 Todos los que lleven camiseta oscura beben 1 trago"
+  },
+  {
+    "texto": "👉 {player} reparte 2 tragos entre quien quiera"
+  },
+  {
+    "texto": "😈 {player} elige quién bebe 3 tragos"
+  },
+  {
+    "texto": "🙌 Todos los solteros beben 1 trago"
+  },
+  {
+    "texto": "💔 Todos los que tengan pareja beben 1 trago"
+  },
+  {
+    "texto": "🧠 {player} tiene que decir el abecedario del tirón o bebe 3 tragos"
+  },
+  {
+    "texto": "🖐️ Los últimos 2 en tocar la mesa beben 2 tragos"
+  },
+  {
+    "texto": "🎯 {player} elige a alguien para hacer 10 flexiones o beber 2 tragos"
+  },
+  {
+    "texto": "🤐 {player} no puede hablar durante 2 rondas o bebe 3 tragos"
+  },
+  {
+    "texto": "🔄 Se cambia el sentido del juego y {player} bebe 1 trago"
+  },
+  {
+    "texto": "🍻 Todos brindan y beben 1 trago"
+  },
+  {
+    "texto": "👀 El último en mirar a los ojos a {player} bebe 1 trago"
+  },
+  {
+    "texto": "😜 El resto del grupo elige a quién y qué le manda {player} por mensaje, o se acaba la copa"
+  },
+  {
+    "texto": "🍺 {player} elige a 3 personas para que beban juntas"
+  },
+  {
+    "texto": "😜 {player} imita a otro jugador; si nadie adivina a quién, bebe 3 tragos"
+  },
+  {
+    "texto": "🎉 Ronda especial: todos beben 1 trago"
+  },
+  {
+    "texto": "🤫 {player} tiene que contar un secreto o bebe 3 tragos"
+  },
+  {
+    "texto": "🧊 {player} aguanta la respiración 15 segundos o bebe 2 tragos"
+  },
+  {
+    "texto": "🍹 {player} tiene que beber de la copa de la persona que elija"
+  },
+  {
+    "texto": "😈 {player} bebe 3 tragos sin usar las manos"
+  },
+  {
+    "texto": "🔥 {player} tiene que hacer lo que diga el jugador a su derecha durante 3 rondas o bebe 3 tragos"
+  },
+  {
+    "texto": "🥵 {player} se moja con hielo o bebe 3 tragos"
+  },
+  {
+    "texto": "😭 {player} cuenta la anécdota más vergonzosa que tenga o bebe 3 tragos"
+  },
+  {
+    "texto": "🤢 {player} mezcla su bebida con la de otro jugador y se la bebe"
+  },
+  {
+    "texto": "🔒 {player} no puede beber en las próximas 3 rondas aunque le toque"
+  },
+  {
+    "texto": "👑 {player} es el \"rey/reina\" durante 3 rondas: todos le obedecen o beben 3 tragos"
+  },
+  {
+    "texto": "🎭 {player} tiene que hablar con acento random hasta su próximo turno o bebe 3 tragos"
+  },
+  {
+    "texto": "🥴 {player} bebe 3 tragos con los ojos cerrados"
+  },
+  {
+    "texto": "🍷 {player} se acaba la copa entera"
+  },
+  {
+    "texto": "🎯 {player} elige a alguien para que se acabe la copa"
+  },
+  {
+    "texto": "🍻 El jugador con la racha más baja se acaba la copa"
+  },
+  {
+    "texto": "🎤 {player} canta una canción y el resto tiene que adivinar cuál es; si no aciertan, bebe 2 tragos"
+  },
+  {
+    "texto": "🕺 {player} tiene que bailar sin música durante 20 segundos o bebe 2 tragos"
+  },
+  {
+    "texto": "📸 {player} tiene que sacarse una foto ahora mismo y subirla a Instagram, o bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 {player} responde una pregunta incómoda que le hagan o bebe 2 tragos"
+  },
+  {
+    "texto": "🎭 {player} imita a un famoso y el resto adivina quién es; si nadie acierta bebe 2 tragos"
+  },
+  {
+    "texto": "🙋 Todos los que hayan nacido en verano beben 1 trago"
+  },
+  {
+    "texto": "🙋 Todos los que hayan nacido en invierno beben 1 trago"
+  },
+  {
+    "texto": "🔁 Se invierte el turno: el jugador anterior vuelve a beber 1 trago"
+  },
+  {
+    "texto": "🥇 El jugador más alto del grupo bebe 2 tragos"
+  },
+  {
+    "texto": "🥈 El jugador más bajo del grupo bebe 2 tragos"
+  },
+  {
+    "texto": "🎲 Todos compiten a piedra, papel o tijera; el que pierda bebe 1 trago"
+  },
+  {
+    "texto": "🗣️ {player} tiene que repetir todo lo que diga la persona de su derecha durante 2 rondas, o bebe 2 tragos"
+  },
+  {
+    "texto": "🧩 {player} tiene que decir 5 palabras que empiecen por la misma letra en 10 segundos o bebe 2 tragos"
+  },
+  {
+    "texto": "👯 {player} elige a otro jugador para brindar juntos 2 tragos"
+  },
+  {
+    "texto": "🚫 A partir de ahora nadie puede decir el nombre de {player}; quien lo diga bebe 2 tragos"
+  },
+  {
+    "texto": "🤳 {player} llama a alguien de su lista de contactos y le dice algo random o bebe 2 tragos"
+  },
+  {
+    "texto": "🤝 {player} y {player2} tienen que intercambiar una prenda de ropa, o beben 1 trago cada uno"
+  }
 ]
