@@ -169,5 +169,26 @@
   },
   {
     "texto": "🤝 {player} y {player2} tienen que intercambiar una prenda de ropa, o beben 1 trago cada uno"
+  },
+  {
+    "texto": "🥂 {player} y {player2} tienen que brindar mirándose fijamente a los ojos, o beben 1 trago cada uno"
+  },
+  {
+    "texto": "🕺 {player} y {player2} tienen que bailar juntos 15 segundos, o beben 1 trago cada uno"
+  },
+  {
+    "texto": "🤳 {player} y {player2} se tienen que hacer una foto random juntos"
+  },
+  {
+    "texto": "😶 {player} y {player2} tienen una batalla de miradas: el primero en reírse bebe 2 tragos"
+  },
+  {
+    "texto": "🤐 {player} y {player2} no se pueden hablar entre ellos durante 2 rondas, o beben 1 trago cada uno"
+  },
+  {
+    "texto": "🎁 {player} le regala su bebida a {player2}"
+  },
+  {
+    "texto": "🗣️ {player} y {player2} tienen que hablar solo en rima hasta su próximo turno, o beben 2 tragos cada uno"
   }
 ]
