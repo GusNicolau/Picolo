@@ -190,5 +190,20 @@
   },
   {
     "texto": "🗣️ {player} y {player2} tienen que hablar solo en rima hasta su próximo turno, o beben 2 tragos cada uno"
+  },
+  {
+    "texto": "🤣 {player} tiene que contar un chiste; si nadie se ríe, bebe 2 tragos"
+  },
+  {
+    "texto": "📱 {player} enseña la última foto de su galería o bebe 2 tragos"
+  },
+  {
+    "texto": "🙃 {player} tiene que beber con la mano contraria a la que usa normalmente"
+  },
+  {
+    "texto": "🙊 {player} no puede decir \"sí\" ni \"no\" hasta su próximo turno, o bebe 2 tragos si falla"
+  },
+  {
+    "texto": "🐍 {player} tiene que imitar a un animal durante 1 ronda, o bebe 2 tragos"
   }
 ]
