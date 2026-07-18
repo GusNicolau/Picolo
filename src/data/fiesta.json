@@ -205,5 +205,17 @@
   },
   {
     "texto": "🐍 {player} tiene que imitar a un animal durante 1 ronda, o bebe 2 tragos"
+  },
+  {
+    "texto": "🤜🤛 {player} y {player2} chocan los cinco cada vez que alguien diga \"bebe\" durante 2 rondas, o beben 1 trago cada uno"
+  },
+  {
+    "texto": "🎤 {player} y {player2} tienen que cantar un dueto random, o beben 2 tragos cada uno"
+  },
+  {
+    "texto": "🧠 {player} y {player2} compiten a decir animales sin repetir; el primero que se quede en blanco bebe 2 tragos"
+  },
+  {
+    "texto": "🕺 {player} tiene que copiar todo lo que haga {player2} durante 1 ronda, o bebe 2 tragos"
   }
 ]
