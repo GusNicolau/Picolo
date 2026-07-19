@@ -217,5 +217,26 @@
   },
   {
     "texto": "🕺 {player} tiene que copiar todo lo que haga {player2} durante 1 ronda, o bebe 2 tragos"
+  },
+  {
+    "texto": "🎨 {player} tiene que dibujar en el aire algo random y el resto adivinar qué es; si nadie acierta, bebe 2 tragos"
+  },
+  {
+    "texto": "🧠 {player} tiene que responder una pregunta de cultura general random; si falla, bebe 2 tragos"
+  },
+  {
+    "texto": "🕵️ El resto le hace 3 preguntas de sí o no a {player} para adivinar en qué está pensando; si no lo adivinan, bebe 2 tragos"
+  },
+  {
+    "texto": "🙅 Durante 2 rondas está prohibido decir la palabra \"no\"; quien la diga bebe 1 trago"
+  },
+  {
+    "texto": "🗿 {player} elige a alguien para hacer de estatua durante 1 ronda entera; si se mueve, bebe 2 tragos"
+  },
+  {
+    "texto": "😐 El grupo tiene 30 segundos para hacer reír a {player}; si lo consiguen, {player} bebe 2 tragos"
+  },
+  {
+    "texto": "🛒 {player} empieza diciendo \"voy a la compra y llevo...\" y cada jugador añade algo pasando el turno a su derecha; el primero que se equivoque bebe 2 tragos"
   }
 ]
