@@ -238,5 +238,20 @@
   },
   {
     "texto": "🛒 {player} empieza diciendo \"voy a la compra y llevo...\" y cada jugador añade algo pasando el turno a su derecha; el primero que se equivoque bebe 2 tragos"
+  },
+  {
+    "texto": "🪙 {player} y {player2} juegan a cara o cruz; el que pierda bebe 2 tragos"
+  },
+  {
+    "texto": "👁️ {player} y {player2} compiten a quién aguanta más sin parpadear; el que pierda bebe 2 tragos"
+  },
+  {
+    "texto": "💦 Cascada: todos empiezan a beber a la vez, nadie puede parar hasta que lo haga {player}, y así en cadena con el de su derecha"
+  },
+  {
+    "texto": "🤔 {player} propone un \"¿quién es más probable que...?\"; todos señalan a la vez y quien reciba más votos bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 {player} dice un \"yo nunca...\"; quien sí lo haya hecho bebe 1 trago"
   }
 ]
