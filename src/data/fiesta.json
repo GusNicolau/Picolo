@@ -226,5 +226,54 @@
   },
   {
     "texto": "🕵️ El resto le hace 3 preguntas de sí o no a {player} para adivinar en qué está pensando; si no lo adivinan, bebe 2 tragos"
+  },
+  {
+    "texto": "🙅 Durante 2 rondas está prohibido decir la palabra \"no\"; quien la diga bebe 1 trago"
+  },
+  {
+    "texto": "🗿 {player} elige a alguien para hacer de estatua durante 1 ronda entera; si se mueve, bebe 2 tragos"
+  },
+  {
+    "texto": "😐 El grupo tiene 30 segundos para hacer reír a {player}; si lo consiguen, {player} bebe 2 tragos"
+  },
+  {
+    "texto": "🛒 {player} empieza diciendo \"voy a la compra y llevo...\" y cada jugador añade algo pasando el turno a su derecha; el primero que se equivoque bebe 2 tragos"
+  },
+  {
+    "texto": "🪙 {player} y {player2} juegan a cara o cruz; el que pierda bebe 2 tragos"
+  },
+  {
+    "texto": "👁️ {player} y {player2} compiten a quién aguanta más sin parpadear; el que pierda bebe 2 tragos"
+  },
+  {
+    "texto": "💦 Cascada: todos empiezan a beber a la vez, nadie puede parar hasta que lo haga {player}, y así en cadena con el de su derecha"
+  },
+  {
+    "texto": "🤔 {player} propone un \"¿quién es más probable que...?\"; todos señalan a la vez y quien reciba más votos bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 {player} dice un \"yo nunca...\"; quien sí lo haya hecho bebe 1 trago"
+  },
+  {
+    "texto": "🗳️ El grupo vota quién es el chico más gracioso; el más votado bebe 2 tragos",
+    "genero": "hombre"
+  },
+  {
+    "texto": "🍻 Los chicos brindan entre ellos y beben 1 trago",
+    "genero": "hombre"
+  },
+  {
+    "texto": "🗳️ El grupo vota quién es la chica más graciosa; la más votada bebe 2 tragos",
+    "genero": "mujer"
+  },
+  {
+    "texto": "🍻 Las chicas brindan entre ellas y beben 1 trago",
+    "genero": "mujer"
+  },
+  {
+    "texto": "🎬 {player} tiene que representar una película sin hablar (mímica); si nadie la adivina en 30 segundos, bebe 2 tragos"
+  },
+  {
+    "texto": "🗯️ {player} tiene que decir un trabalenguas 3 veces seguidas sin equivocarse, o bebe 2 tragos"
   }
 ]
