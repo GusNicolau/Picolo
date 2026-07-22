@@ -253,5 +253,21 @@
   },
   {
     "texto": "🙊 {player} dice un \"yo nunca...\"; quien sí lo haya hecho bebe 1 trago"
+  },
+  {
+    "texto": "🗳️ El grupo vota quién es el chico más gracioso; el más votado bebe 2 tragos",
+    "genero": "hombre"
+  },
+  {
+    "texto": "🍻 Los chicos brindan entre ellos y beben 1 trago",
+    "genero": "hombre"
+  },
+  {
+    "texto": "🗳️ El grupo vota quién es la chica más graciosa; la más votada bebe 2 tragos",
+    "genero": "mujer"
+  },
+  {
+    "texto": "🍻 Las chicas brindan entre ellas y beben 1 trago",
+    "genero": "mujer"
   }
 ]
