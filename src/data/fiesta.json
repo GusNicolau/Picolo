@@ -269,5 +269,32 @@
   {
     "texto": "🍻 Las chicas brindan entre ellas y beben 1 trago",
     "genero": "mujer"
+  },
+  {
+    "texto": "🎬 {player} tiene que representar una película sin hablar (mímica); si nadie la adivina en 30 segundos, bebe 2 tragos"
+  },
+  {
+    "texto": "🗯️ {player} tiene que decir un trabalenguas 3 veces seguidas sin equivocarse, o bebe 2 tragos"
+  },
+  {
+    "texto": "🤖 {player} tiene que hablar como un robot hasta su próximo turno, o bebe 2 tragos"
+  },
+  {
+    "texto": "🤫 Silencio total durante 1 minuto; el primero en hablar o reírse bebe 2 tragos"
+  },
+  {
+    "texto": "📖 {player} tiene que inventarse una historia random de 30 segundos sobre el primer objeto que vea, o bebe 2 tragos"
+  },
+  {
+    "texto": "🔢 {player} tiene que adivinar cuántos dedos va a levantar el resto a la de 3; si falla, bebe 2 tragos"
+  },
+  {
+    "texto": "🥁 {player} empieza un ritmo con las manos; el jugador de su derecha tiene que repetirlo, si se equivoca bebe 1 trago"
+  },
+  {
+    "texto": "🎙️ {player} tiene que hacer de reportero y entrevistar a alguien del grupo durante 30 segundos, o bebe 2 tragos"
+  },
+  {
+    "texto": "🃏 {player} piensa un número del 1 al 10; el resto vota a la vez; quien más se acerque elige quién bebe 2 tragos"
   }
 ]
