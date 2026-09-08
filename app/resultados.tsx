@@ -1,7 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import {
-  Animated, Easing,
   FlatList,
   Image,
   ImageBackground,
@@ -10,25 +9,27 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-
-
-
-
-const avatares: Record<string, any> = {
-  Gustavo: require("../assets/moustache/gustavo.png"),
-  Carlos: require("../assets/moustache/carlos.png"),
-  Andreu: require("../assets/moustache/andreu.png"),
-  Dani: require("../assets/moustache/dani.png"),
-  Mario: require("../assets/moustache/mario.png"),
-  Ale: require("../assets/moustache/ale.png"),
-};
+import { usePlayers } from "../src/context/PlayersContext";
 
 const avatarPorDefecto = require("../assets/moustache/gustavo.png");
+
+type StatsJugador = { cumplidos: number; fallos: number };
 
 export default function ResultadosScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const resultadosObj = params.resultados ? JSON.parse(params.resultados as string) : {};
+  const { jugadores } = usePlayers();
+  const resultadosObj: Record<string, StatsJugador> = params.resultados
+    ? JSON.parse(params.resultados as string)
+    : {};
+  const { rachaMaxima } = useLocalSearchParams();
+
+  // Recuperamos el avatar real de cada jugador desde el contexto (los
+  // resultados solo guardan nombre + estadísticas, no la imagen).
+  const avatarPorNombre: Record<string, any> = {};
+  jugadores.forEach((j) => {
+    avatarPorNombre[j.nombre] = j.avatar;
+  });
 
   const jugadoresOrdenados = Object.entries(resultadosObj).sort(
     ([, statsA], [, statsB]) => statsB.cumplidos - statsA.cumplidos
@@ -37,32 +38,6 @@ export default function ResultadosScreen() {
   const volverAJugadores = () => {
     router.push("/jugadores");
   };
-  const glowAnim = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(glowAnim, {
-          toValue: 1,
-          duration: 1200,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: false,
-        }),
-        Animated.timing(glowAnim, {
-          toValue: 0,
-          duration: 1200,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: false,
-        }),
-      ])
-    ).start();
-  }, []);
-
-  const neonColor = glowAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["#FF4500", "#FFD700"], // fuego → dorado
-  });
-
 
   return (
     <ImageBackground
@@ -71,8 +46,10 @@ export default function ResultadosScreen() {
       resizeMode="cover"
     >
       <View style={styles.overlay}>
-        <Text style={styles.title}>RESULTADOS FINALES</Text>
-
+        <Text style={styles.title}>Resultados finales</Text>
+        <Text style={styles.rachaText}>
+          🔥 Racha más alta: <Text style={styles.rachaValue}>{rachaMaxima}</Text>
+        </Text>
         <FlatList
           data={jugadoresOrdenados}
           keyExtractor={([nombre]) => nombre}
@@ -86,13 +63,13 @@ export default function ResultadosScreen() {
               ]}
             >
               <Image
-                source={avatares[nombre] || avatarPorDefecto}
+                source={avatarPorNombre[nombre] || avatarPorDefecto}
                 style={styles.avatar}
               />
               <View style={{ flex: 1 }}>
-                <Animated.Text style={[styles.playerName, { textShadowColor: neonColor }]}>
+                <Text style={styles.playerName} numberOfLines={1} ellipsizeMode="tail">
                   {index + 1}. {nombre}
-                </Animated.Text>
+                </Text>
 
                 <Text style={styles.stats}>
                   🍺 {stats.cumplidos}   ✖ {stats.fallos}
@@ -112,6 +89,20 @@ export default function ResultadosScreen() {
   );
 }
 
+// Paleta reducida y plana: un único acento (ámbar) sobre fondo oscuro neutro
+const COLORS = {
+  overlay: "rgba(10, 10, 13, 0.92)",
+  card: "#1C1C24",
+  cardBorder: "rgba(255,255,255,0.08)",
+  accent: "#F2A93B",
+  accentOn: "#1C1408", // texto oscuro sobre botones de acento
+  text: "#F5F5F7",
+  textMuted: "#9A9AA5",
+  gold: "#D4AF37",
+  silver: "#B8BEC7",
+  bronze: "#C08A52",
+};
+
 const styles = StyleSheet.create({
   background: {
     flex: 1,
@@ -121,89 +112,84 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     width: "100%",
-    backgroundColor: "rgba(0,0,0,0.8)",
+    backgroundColor: COLORS.overlay,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
   },
   title: {
-    fontSize: 30,
-    fontWeight: "900",
-    color: "#FFD700",
-    textShadowColor: "#FF4500",
-    textShadowOffset: { width: 3, height: 3 },
-    textShadowRadius: 8,
-    marginTop: 120,
-    marginBottom: 40,
+    fontSize: 26,
+    fontWeight: "700",
+    color: COLORS.text,
+    letterSpacing: 0.3,
+    marginTop: 100,
+    marginBottom: 24,
     textAlign: "center",
   },
   playerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(26, 26, 46, 0.9)",
+    backgroundColor: COLORS.card,
     marginBottom: 10,
-    padding: 15,
-    borderRadius: 20,
+    padding: 14,
+    borderRadius: 16,
     width: "100%",
-    shadowColor: "#FF0000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-    elevation: 8,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
   },
   primerLugar: {
-    borderColor: "#FFD700",
-    borderWidth: 3,
+    borderColor: COLORS.gold,
+    borderWidth: 1.5,
   },
   segundoLugar: {
-    borderColor: "#C0C0C0",
-    borderWidth: 2,
+    borderColor: COLORS.silver,
+    borderWidth: 1.5,
   },
   tercerLugar: {
-    borderColor: "#CD7F32",
-    borderWidth: 2,
+    borderColor: COLORS.bronze,
+    borderWidth: 1.5,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 15,
-    marginRight: 20,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    marginRight: 16,
+    borderWidth: 2,
+    borderColor: "rgba(242,169,59,0.35)",
   },
   playerName: {
-    textAlign: "center",
-    fontSize: 24,
-    color: "#fff",
-    fontWeight: "bold",
-    marginBottom: 5,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 15,
+    fontSize: 19,
+    color: COLORS.text,
+    fontWeight: "700",
+    marginBottom: 4,
   },
   stats: {
-    textAlign: "center",
-    fontSize: 28,
-    color: "#FFDDDD",
+    fontSize: 16,
+    color: COLORS.textMuted,
+    fontWeight: "500",
   },
   button: {
-    marginTop: 30,
-    backgroundColor: "#8B0000",
-    borderColor: "#FF4C61",
-    borderWidth: 2,
-    paddingVertical: 16,
+    marginTop: 20,
+    backgroundColor: COLORS.accent,
+    paddingVertical: 15,
     borderRadius: 12,
     width: "100%",
     alignItems: "center",
-    elevation: 6,
-    shadowColor: "#FF4C61",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.8,
-    shadowRadius: 6,
     marginBottom: 60,
   },
   buttonText: {
-    fontSize: 20,
-    fontWeight: "900",
-    color: "#fff",
-    textTransform: "uppercase",
-    letterSpacing: 2,
+    fontSize: 17,
+    fontWeight: "700",
+    color: COLORS.accentOn,
+    letterSpacing: 0.5,
+  },
+  rachaText: {
+    fontSize: 16,
+    color: COLORS.textMuted,
+    marginBottom: 24,
+  },
+  rachaValue: {
+    color: COLORS.accent,
+    fontWeight: "700",
   },
 });

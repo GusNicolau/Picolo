@@ -1,6 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
-import { useRouter, useSegments } from "expo-router";
-import React from "react";
+import { useNavigation, useRouter, useSegments } from "expo-router";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function BotonVolver() {
@@ -36,18 +34,29 @@ export default function BotonVolver() {
   // ✅ Detectar si estamos en la raíz (index)
   // @ts-ignore – ignoramos el tipo porque "index" no está declarado en los tipos de expo-router
   const currentSegment = segments[segments.length - 1];
-  // @ts-ignore – permitimos comparar con "index" aunque TS no lo reconozca
-  const isIndexScreen = !currentSegment || currentSegment === "index" || segments.length === 0 ||  currentSegment === "juego" ||  currentSegment === "resultados";
+  const isIndexScreen =
+    !currentSegment ||
+    // @ts-ignore – "index" no forma parte de la unión de segmentos tipados
+    currentSegment === "index" ||
+    // @ts-ignore – la tupla de segmentos se tipa con longitud fija (siempre 1)
+    segments.length === 0 ||
+    currentSegment === "juego" ||
+    currentSegment === "resultados";
 
   if (isIndexScreen) {
     return null;
   }
 
+  // En Jugadores y Moustache el botón se ve más pequeño que en el resto
+  const esPantallaCompacta =
+    currentSegment === "jugadores" || currentSegment === "moustache";
+  const size = esPantallaCompacta ? 30 : 50;
+
   return (
     <TouchableOpacity style={styles.container} onPress={handleBack}>
       <Image
         source={require("../../assets/images/Flecha-Back.png")}
-        style={styles.icon}
+        style={[styles.icon, { width: size, height: size }]}
       />
     </TouchableOpacity>
   );
@@ -56,16 +65,13 @@ export default function BotonVolver() {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 65, // ⬆️ antes 40 → más margen superior
+    top: 75,
     left: 15,
     zIndex: 999,
     padding: 10,
   },
   icon: {
-    width: 50,
-    height: 50,
     resizeMode: "contain",
     tintColor: "#FFFFFF", // 🤍 fuerza el color blanco
   },
 });
-

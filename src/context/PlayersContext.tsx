@@ -15,6 +15,7 @@ type PlayersContextType = {
   jugadores: Jugador[];
   setJugadores: (jugadores: Jugador[]) => void;
   addJugador: (jugador: Jugador) => void;
+  editJugador: (nombreActual: string, cambios: Partial<Jugador>) => void;
   clearJugadores: () => void;
   modo: ModoJuego;
   setModo: (modo: ModoJuego) => void;
@@ -33,6 +34,12 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
     setJugadoresState((prev) => [...prev, jugador]);
   };
 
+  const editJugador = (nombreActual: string, cambios: Partial<Jugador>) => {
+    setJugadoresState((prev) =>
+      prev.map((j) => (j.nombre === nombreActual ? { ...j, ...cambios } : j))
+    );
+  };
+
   const clearJugadores = () => setJugadoresState([]);
 
   return (
@@ -41,6 +48,7 @@ export const PlayersProvider = ({ children }: { children: ReactNode }) => {
         jugadores,
         setJugadores: setJugadoresState,
         addJugador,
+        editJugador,
         clearJugadores,
         modo,
         setModo,

@@ -1,8 +1,7 @@
-import BotonVolver from "@/src/components/BotonVolver";
 import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
-  Animated,
+  Alert,
   FlatList,
   Image,
   ImageBackground,
@@ -21,27 +20,57 @@ import {
 
 import { Jugador, usePlayers } from "../src/context/PlayersContext";
 
-// Mapa de avatares de Moustache
-const avatares: Record<string, any> = {
-  Gustavo: require("../assets/moustache/gustavo.png"),
-  Carlos: require("../assets/moustache/carlos.png"),
-  Dani: require("../assets/moustache/dani.png"),
-  Andreu: require("../assets/moustache/andreu.png"),
-  Mario: require("../assets/moustache/mario.png"),
+// Mapa de avatares de amigos predefinidos
+const avataresAmigos: Record<string, any> = {
+  Sherco: require("../assets/moustache/gustavo.png"),
+  Carlota: require("../assets/moustache/carlos.png"),
+  Toffe: require("../assets/moustache/andreu.png"),
+  Mariojt72: require("../assets/moustache/mario.png"),
+  Calent: require("../assets/moustache/dani.png"),
+  Amerla: require("../assets/moustache/ale.png"),
+  Cigrona: require("../assets/moustache/lara.png"),
+  Pantorrilla: require("../assets/moustache/pantorrilla.png"),
+  Princesa: require("../assets/moustache/princesa.png"),
 };
+
+// Pool de avatares disponibles (amigos predefinidos)
+const AVATARES: any[] = Object.values(avataresAmigos);
 
 export default function JugadoresScreen() {
   const [nombre, setNombre] = useState("");
-  const { jugadores, addJugador, setJugadores } = usePlayers();
+  const { jugadores, addJugador, editJugador, setJugadores } = usePlayers();
   const router = useRouter();
+
+  // Edición de nombre in-line
+  const [editingName, setEditingName] = useState<string | null>(null);
+  const [editingValue, setEditingValue] = useState("");
+
+  // Edición de avatar mediante modal
+  const [editingAvatar, setEditingAvatar] = useState<string | null>(null);
+
+  const elegirAvatarAleatorio = () => {
+    const usados = jugadores.map((j) => j.avatar);
+    const disponibles = AVATARES.filter((a) => !usados.includes(a));
+    const pool = disponibles.length > 0 ? disponibles : AVATARES;
+    return pool[Math.floor(Math.random() * pool.length)];
+  };
 
   const añadirJugador = () => {
     const trimmed = nombre.trim();
     if (!trimmed) return;
 
+    if (jugadores.some((j) => j.nombre.toLowerCase() === trimmed.toLowerCase())) {
+      Alert.alert("Nombre repetido", "Ya existe un jugador con ese nombre.");
+      return;
+    }
+
+    const avatarAmigo = avataresAmigos[trimmed];
+    const avataresUsados = jugadores.map((j) => j.avatar);
+    const avatarAmigoDisponible = avatarAmigo && !avataresUsados.includes(avatarAmigo);
     const nuevoJugador: Jugador = {
       nombre: trimmed,
-      avatar: avatares[trimmed] || undefined,
+      avatar: avatarAmigoDisponible ? avatarAmigo : elegirAvatarAleatorio(),
+      avatarName: avatarAmigoDisponible ? trimmed : undefined,
     };
     addJugador(nuevoJugador);
     setNombre("");
@@ -49,6 +78,34 @@ export default function JugadoresScreen() {
 
   const eliminarJugador = (nombre: string) => {
     setJugadores(jugadores.filter((j) => j.nombre !== nombre));
+  };
+
+  const empezarEdicionNombre = (nombreActual: string) => {
+    setEditingName(nombreActual);
+    setEditingValue(nombreActual);
+  };
+
+  const confirmarEdicionNombre = (nombreActual: string) => {
+    const trimmed = editingValue.trim();
+    if (!trimmed || trimmed === nombreActual) {
+      setEditingName(null);
+      return;
+    }
+    if (jugadores.some((j) => j.nombre.toLowerCase() === trimmed.toLowerCase())) {
+      Alert.alert("Nombre repetido", "Ya existe un jugador con ese nombre.");
+      return;
+    }
+    editJugador(nombreActual, { nombre: trimmed });
+    setEditingName(null);
+  };
+
+  const confirmarCambioAvatar = (nombreJugador: string, nuevoAvatar: any) => {
+    const enUsoPorOtro = jugadores.some(
+      (j) => j.nombre !== nombreJugador && j.avatar === nuevoAvatar
+    );
+    if (enUsoPorOtro) return;
+    editJugador(nombreJugador, { avatar: nuevoAvatar, avatarName: undefined });
+    setEditingAvatar(null);
   };
 
   const empezarJuego = () => {
@@ -62,8 +119,6 @@ export default function JugadoresScreen() {
       resizeMode="cover"
     >
       <View style={styles.overlay}>
-        <BotonVolver />
-
         <Text style={styles.title}>Añadir jugadores</Text>
 
         <View style={styles.inputContainer}>
@@ -84,7 +139,7 @@ export default function JugadoresScreen() {
           style={styles.moustacheButton}
           onPress={() => router.push("/moustache")}
         >
-          <Text style={styles.addButtonText}>Moustache</Text>
+          <Text style={styles.moustacheButtonText}>Moustache</Text>
         </TouchableOpacity>
 
 
@@ -94,11 +149,35 @@ export default function JugadoresScreen() {
           style={styles.list}
           renderItem={({ item }) => (
             <View style={styles.playerContainer}>
-              <Image source={item.avatar || avatares["Gustavo"]} style={styles.avatar} />
-              <NeonText text={item.nombre} />
+              <TouchableOpacity onPress={() => setEditingAvatar(item.nombre)}>
+                <Image source={item.avatar || avataresAmigos["Sherco"]} style={styles.avatar} />
+                <View style={styles.avatarEditBadge}>
+                  <Text style={styles.avatarEditBadgeText}>✏️</Text>
+                </View>
+              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => eliminarJugador(item.nombre)}>
-                <Text style={styles.delete}>✖</Text>
+              {editingName === item.nombre ? (
+                <TextInput
+                  style={styles.playerNameInput}
+                  value={editingValue}
+                  onChangeText={setEditingValue}
+                  onBlur={() => confirmarEdicionNombre(item.nombre)}
+                  onSubmitEditing={() => confirmarEdicionNombre(item.nombre)}
+                  autoFocus
+                  maxLength={20}
+                  selectTextOnFocus
+                  textAlign="center"
+                />
+              ) : (
+                <TouchableOpacity style={styles.nameWrapper} onPress={() => empezarEdicionNombre(item.nombre)}>
+                  <Text style={styles.player} numberOfLines={1} ellipsizeMode="tail">
+                    {item.nombre}
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarJugador(item.nombre)}>
+                <Text style={styles.delete}>✕</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -109,52 +188,72 @@ export default function JugadoresScreen() {
             <Text style={styles.startButtonText}>▶ Empezar juego</Text>
           </TouchableOpacity>
         )}
+
+        {editingAvatar && (
+          <View style={styles.avatarModalOverlay}>
+            <View style={styles.avatarModal}>
+              <Text style={styles.avatarModalTitle}>Cambiar avatar</Text>
+              <Text style={styles.avatarModalSubtitle}>{editingAvatar}</Text>
+              <FlatList
+                data={AVATARES}
+                keyExtractor={(_, i) => String(i)}
+                numColumns={4}
+                contentContainerStyle={styles.avatarGrid}
+                renderItem={({ item }) => {
+                  const jugadorActual = jugadores.find((j) => j.nombre === editingAvatar);
+                  const isSelected = jugadorActual?.avatar === item;
+                  const enUsoPorOtro = jugadores.some(
+                    (j) => j.nombre !== editingAvatar && j.avatar === item
+                  );
+                  return (
+                    <TouchableOpacity
+                      onPress={() => confirmarCambioAvatar(editingAvatar, item)}
+                      disabled={enUsoPorOtro}
+                      style={[
+                        styles.avatarOption,
+                        isSelected && styles.avatarOptionSelected,
+                        enUsoPorOtro && styles.avatarOptionDisabled,
+                      ]}
+                    >
+                      <Image source={item} style={styles.avatarOptionImage} />
+                      {isSelected && (
+                        <View style={styles.avatarOptionCheck}>
+                          <Text style={styles.avatarOptionCheckText}>✓</Text>
+                        </View>
+                      )}
+                      {enUsoPorOtro && (
+                        <View style={styles.avatarOptionLockOverlay}>
+                          <Text style={styles.avatarOptionLockText}>🔒</Text>
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+              <TouchableOpacity style={styles.avatarModalClose} onPress={() => setEditingAvatar(null)}>
+                <Text style={styles.avatarModalCloseText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
     </ImageBackground>
   );
 }
 
-const NeonText = ({ text }: { text: string }) => {
-  const glow = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(glow, { toValue: 1, duration: 1200, useNativeDriver: false }),
-        Animated.timing(glow, { toValue: 0, duration: 1200, useNativeDriver: false }),
-      ])
-    ).start();
-  }, []);
-
-  // Efecto de brillo "neón fuego"
-  const neonColor = glow.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["#f8e6bdff", "#FF4C61"], // 🔥 de dorado a rojo intenso
-  });
-
-  const shadowIntensity = glow.interpolate({
-    inputRange: [0, 1],
-    outputRange: [4, 12],
-  });
-
-
-  return (
-    <Animated.Text
-      style={[
-        styles.player,
-        {
-          color: neonColor,
-          textShadowColor: "#FF4500",
-          textShadowOffset: { width: 0, height: 0 },
-          textShadowRadius: shadowIntensity,
-        },
-      ]}
-    >
-      {text}
-    </Animated.Text>
-  );
+// Paleta reducida y plana: un único acento (ámbar) sobre fondo oscuro neutro
+const COLORS = {
+  overlay: "rgba(10, 10, 13, 0.92)",
+  card: "#1C1C24",
+  cardBorder: "rgba(255,255,255,0.08)",
+  accent: "#F2A93B",
+  accentSoft: "rgba(242,169,59,0.35)",
+  accentOn: "#1C1408", // texto oscuro sobre botones de acento
+  text: "#F5F5F7",
+  textMuted: "#9A9AA5",
+  danger: "#E5484D",
+  dangerSoft: "rgba(229,72,77,0.12)",
 };
-
 
 const styles = StyleSheet.create({
   background: {
@@ -164,38 +263,36 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.75)",
+    backgroundColor: COLORS.overlay,
     padding: 20,
     alignItems: "center",
   },
   title: {
-    fontSize: 28,
-    color: "#FFD700",
-    fontWeight: "bold",
+    fontSize: 26,
+    color: COLORS.text,
+    fontWeight: "700",
     marginTop: 60,
     marginBottom: 20,
-    textShadowColor: "#FF4500",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 6,
+    letterSpacing: 0.3,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
-    marginBottom: 15,
+    marginBottom: 12,
   },
   input: {
     flex: 1,
-    backgroundColor: "rgba(20, 20, 35, 0.9)",
-    color: "#fff",
+    backgroundColor: COLORS.card,
+    color: COLORS.text,
     padding: 12,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#ff704cff",
+    borderColor: COLORS.cardBorder,
     fontSize: 16,
   },
   addButtonSmall: {
-    backgroundColor: "#ff704cff",
+    backgroundColor: COLORS.accent,
     marginLeft: 10,
     paddingVertical: 10,
     paddingHorizontal: 18,
@@ -203,107 +300,213 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  addButton: {
-    marginTop: 15,
-    backgroundColor: "#8B0000",
-    borderColor: "#FF4C61",
-    borderWidth: 2,
-    paddingVertical: 16,
-    borderRadius: 12,
-    width: "100%",
-    alignItems: "center",
-    elevation: 6,
-    shadowColor: "#FF4C61",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.8,
-    shadowRadius: 6,
-  },
   addButtonText: {
-    fontSize: 20,
-    fontWeight: "900",
-    color: "#fff",
-    textTransform: "uppercase",
-    letterSpacing: 2,
-    textShadowColor: "#000",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 4,
+    fontSize: 18,
+    fontWeight: "700",
+    color: COLORS.accentOn,
   },
-  // Puedes usar esta variación para el botón de Moustache (color distinto)
+  // Botón secundario (outline): mismo acento, sin relleno
   moustacheButton: {
-    marginTop: 15,
-    backgroundColor: "#f85555ff",
-    borderColor: "#6d0303ff",
-    borderWidth: 2,
-    paddingVertical: 16,
-    borderRadius: 12,
+    marginTop: 4,
+    marginBottom: 15,
+    backgroundColor: "transparent",
+    borderColor: COLORS.accentSoft,
+    borderWidth: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
     width: "100%",
     alignItems: "center",
-    elevation: 6,
-    shadowColor: "#690505ff",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+  },
+  moustacheButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: COLORS.accent,
   },
   list: {
-    marginTop: 20,
+    marginTop: 4,
     width: "100%",
   },
   playerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(26, 26, 46, 0.95)",
+    backgroundColor: COLORS.card,
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: 14,
     marginBottom: 10,
     justifyContent: "space-between",
     borderWidth: 1,
-    borderColor: "#FF4C61",
-    shadowColor: "#FF4C61",
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
+    borderColor: COLORS.cardBorder,
+  },
+  nameWrapper: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   player: {
-    fontSize: 25,
+    fontSize: 20,
     textAlign: "center",
-    color: "#fff",
-    marginLeft: 20,
-    flex: 1,
+    color: COLORS.text,
     fontWeight: "600",
   },
   avatar: {
-    width: 75,
-    height: 75,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 2,
+    borderColor: COLORS.accentSoft,
+  },
+  avatarEditBadge: {
+    position: "absolute",
+    bottom: -2,
+    right: -2,
+    backgroundColor: COLORS.card,
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.accentSoft,
+  },
+  avatarEditBadgeText: {
+    fontSize: 10,
+  },
+  playerNameInput: {
+    flex: 1,
+    fontSize: 18,
+    color: COLORS.text,
+    fontWeight: "600",
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.accent,
+    paddingVertical: 2,
+    marginHorizontal: 10,
+  },
+  deleteButton: {
+    width: 30,
+    height: 30,
     borderRadius: 15,
-    borderWidth: 0,
-    borderColor: "#492faaff",
+    backgroundColor: COLORS.dangerSoft,
+    justifyContent: "center",
+    alignItems: "center",
   },
   delete: {
-    fontSize: 30,
-    color: "#FF4C61",
-    marginLeft: 10,
+    fontSize: 15,
+    color: COLORS.danger,
+    fontWeight: "700",
+  },
+  avatarModalOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.75)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999,
+  },
+  avatarModal: {
+    backgroundColor: COLORS.card,
+    borderRadius: 16,
+    padding: 20,
+    width: "90%",
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+    maxHeight: "70%",
+  },
+  avatarModalTitle: {
+    color: COLORS.text,
+    fontSize: 18,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 4,
+  },
+  avatarModalSubtitle: {
+    color: COLORS.textMuted,
+    fontSize: 14,
+    fontWeight: "500",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  avatarGrid: {
+    alignItems: "center",
+    paddingBottom: 10,
+  },
+  avatarOption: {
+    margin: 4,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+    overflow: "visible",
+    position: "relative",
+  },
+  avatarOptionSelected: {
+    borderColor: COLORS.accent,
+  },
+  avatarOptionDisabled: {
+    opacity: 0.35,
+  },
+  avatarOptionImage: {
+    width: 54,
+    height: 54,
+    borderRadius: 8,
+  },
+  avatarOptionLockOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarOptionLockText: {
+    fontSize: 18,
+  },
+  avatarOptionCheck: {
+    position: "absolute",
+    top: -6,
+    right: -6,
+    backgroundColor: COLORS.accent,
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarOptionCheckText: {
+    color: COLORS.accentOn,
+    fontSize: 11,
+    fontWeight: "900",
+  },
+  avatarModalClose: {
+    marginTop: 16,
+    backgroundColor: "transparent",
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+  },
+  avatarModalCloseText: {
+    color: COLORS.textMuted,
+    fontSize: 15,
+    fontWeight: "600",
   },
   startButton: {
-    marginTop: 30,
-    backgroundColor: "#8B0000",
-    borderColor: "#FF4C61",
-    borderWidth: 2,
-    paddingVertical: 16,
+    marginTop: 20,
+    backgroundColor: COLORS.accent,
+    paddingVertical: 15,
     borderRadius: 12,
     width: "100%",
     alignItems: "center",
-    elevation: 6,
-    shadowColor: "#FF4C61",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.8,
-    shadowRadius: 6,
     marginBottom: 60,
   },
   startButtonText: {
-    fontSize: 20,
-    fontWeight: "900",
-    color: "#fff",
-    textTransform: "uppercase",
-    letterSpacing: 2,
+    fontSize: 17,
+    fontWeight: "700",
+    color: COLORS.accentOn,
+    letterSpacing: 0.5,
   },
 });

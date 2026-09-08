@@ -33,87 +33,91 @@ export default function HomeScreen() {
         <Pressable
           style={({ pressed }) => [
             styles.button,
-            styles.greenButton,
+            styles.buttonPrimary,
             pressed && styles.buttonPressed,
           ]}
           onPress={() => seleccionarModo("fiesta")}
         >
-          <Text style={styles.buttonText}>MODO FIESTA</Text>
+          <Text style={styles.buttonPrimaryText}>MODO FIESTA</Text>
         </Pressable>
 
         <Pressable
           style={({ pressed }) => [
             styles.button,
-            styles.redButton,
+            styles.buttonSecondary,
             pressed && styles.buttonPressed,
           ]}
           onPress={() => seleccionarModo("hot")}
         >
-          <Text style={styles.buttonText}>MODO CALIENTE</Text>
+          <Text style={styles.buttonSecondaryText}>MODO CALIENTE</Text>
         </Pressable>
       </View>
     </ImageBackground>
   );
 }
 
+// Paleta reducida y plana: un único acento (ámbar) sobre fondo oscuro neutro
+const COLORS = {
+  overlay: "rgba(10, 10, 13, 0.92)",
+  accent: "#F2A93B",
+  accentSoft: "rgba(242,169,59,0.35)",
+  accentOn: "#1C1408", // texto oscuro sobre botones de acento
+  text: "#F5F5F7",
+  textMuted: "#9A9AA5",
+};
+
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.85)",
+    backgroundColor: COLORS.overlay,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
   },
   title: {
-    fontSize: 42,
-    fontWeight: "900",
-    letterSpacing: 2,
-    color: "#FFD700",
-    textShadowColor: "#FF4500",
-    textShadowOffset: { width: 3, height: 3 },
-    textShadowRadius: 8,
+    fontSize: 38,
+    fontWeight: "700",
+    letterSpacing: 1,
+    color: COLORS.text,
     marginBottom: 10,
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 18,
-    color: "#bbb",
+    fontSize: 16,
+    color: COLORS.textMuted,
     marginBottom: 50,
     textAlign: "center",
-    textTransform: "uppercase",
-    letterSpacing: 1,
   },
   button: {
     width: "80%",
-    paddingVertical: 18,
+    paddingVertical: 16,
     borderRadius: 12,
-    marginBottom: 20,
+    marginBottom: 16,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.6,
-    shadowRadius: 6,
-    elevation: 8,
+    borderWidth: 1,
   },
-  greenButton: {
-    backgroundColor: "#1E8449",
-    borderColor: "#00FF88",
+  buttonPrimary: {
+    backgroundColor: COLORS.accent,
+    borderColor: COLORS.accent,
   },
-  redButton: {
-    backgroundColor: "#8B0000",
-    borderColor: "#FF4C61",
+  buttonSecondary: {
+    backgroundColor: "transparent",
+    borderColor: COLORS.accentSoft,
   },
   buttonPressed: {
-    transform: [{ scale: 0.97 }],
     opacity: 0.8,
   },
-  buttonText: {
-    fontSize: 22,
-    fontWeight: "900",
-    color: "#fff",
-    letterSpacing: 1,
-    textTransform: "uppercase",
+  buttonPrimaryText: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: COLORS.accentOn,
+    letterSpacing: 0.5,
+  },
+  buttonSecondaryText: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: COLORS.accent,
+    letterSpacing: 0.5,
   },
 });
