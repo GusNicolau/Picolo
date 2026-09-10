@@ -1,50 +1,53 @@
-# Welcome to your Expo app 👋
+# 🍺 Picolo
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Juego de beber para fiestas, hecho con [Expo](https://expo.dev) / React Native. Se añaden jugadores, se elige un modo y la app va sacando retos al estilo tarjetas (deslizar para cumplir o beber).
 
-## Get started
+## Modos de juego
 
-1. Install dependencies
+- **Fiesta**: retos generales para todo el grupo (repartir tragos, minijuegos clásicos como cascada, yo nunca o quién es más probable que..., retos individuales y retos de pareja).
+- **Caliente**: retos más atrevidos.
+
+## Características
+
+- Gestión de jugadores: nombre editable, avatar aleatorio o elegido a mano.
+- Avatares de animales por defecto; los avatares de los amigos ("Moustache") se desbloquean con un código desde Ajustes, para que nadie ajeno al grupo los vea por defecto.
+- Género por jugador (hombre/mujer/inter), usado para que los retos tengan sentido según quién esté jugando (por ejemplo, "las chicas beben" no sale si no hay ninguna mujer en la partida).
+- Retos de un jugador y retos de dos jugadores, con racha individual de aciertos.
+- Los retos no se repiten en la misma partida; cuando se acaban, la partida termina sola y muestra los resultados.
+- Pantalla de Ajustes con interruptor de sonido (preparado para cuando la app tenga audio) y el código de desbloqueo.
+
+## Empezar
+
+1. Instalar dependencias
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. Arrancar la app
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+   Desde ahí se puede abrir en un [build de desarrollo](https://docs.expo.dev/develop/development-builds/introduction/), emulador Android/iOS, o [Expo Go](https://expo.dev/go).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Scripts útiles
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- `npm run lint` — linter del proyecto.
+- `npm run process-avatar -- <entrada> <salida.webp> [tamaño]` — redimensiona y convierte a WebP una imagen de avatar (ver `scripts/process-avatar.js`).
 
-## Get a fresh project
+## Estructura
 
-When you're ready, run:
+- `app/` — pantallas (rutas de expo-router): inicio, jugadores, avatares, ajustes, juego, resultados.
+- `src/context/` — estado global (jugadores, ajustes).
+- `src/controllers/retosController.ts` — selección y filtrado de retos.
+- `src/data/` — contenido de los retos (`fiesta.json`, `hot.json`).
 
-```bash
-npm run reset-project
-```
+## Autor
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Gustavo ([@GusNicolau](https://github.com/GusNicolau))
 
-## Learn more
+## Versión
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1.0.0
