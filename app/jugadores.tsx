@@ -53,6 +53,10 @@ const avataresAnimales: any[] = [
   require("../assets/avatares/oveja.webp"),
   require("../assets/avatares/perro.webp"),
   require("../assets/avatares/gata.webp"),
+  require("../assets/avatares/elefante.webp"),
+  require("../assets/avatares/panda.webp"),
+  require("../assets/avatares/zorra.webp"),
+  require("../assets/avatares/loro.webp"),
 ];
 
 export default function JugadoresScreen() {

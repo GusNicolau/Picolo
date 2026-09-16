@@ -17,6 +17,10 @@ const animales = [
   { nombre: "Oveja", imagen: require("../assets/avatares/oveja.webp") },
   { nombre: "Perro", imagen: require("../assets/avatares/perro.webp") },
   { nombre: "Gata", imagen: require("../assets/avatares/gata.webp") },
+  { nombre: "Elefante", imagen: require("../assets/avatares/elefante.webp") },
+  { nombre: "Panda", imagen: require("../assets/avatares/panda.webp") },
+  { nombre: "Zorra", imagen: require("../assets/avatares/zorra.webp") },
+  { nombre: "Loro", imagen: require("../assets/avatares/loro.webp") },
 ];
 
 const amigos = [
@@ -125,7 +129,10 @@ export default function AvataresScreen() {
           data={disponibles}
           keyExtractor={(item) => item.nombre}
           numColumns={2}
+          style={styles.list}
           contentContainerStyle={styles.grid}
+          columnWrapperStyle={styles.gridRow}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item }) => {
             const isSelected = seleccionados.includes(item.nombre);
             return (
@@ -225,7 +232,14 @@ const styles = StyleSheet.create({
   tabButtonTextActive: {
     color: COLORS.accentOn,
   },
+  list: {
+    flex: 1,
+    width: "100%",
+  },
   grid: {
+    paddingBottom: 20,
+  },
+  gridRow: {
     justifyContent: "center",
   },
   cardContainer: {
