@@ -1,5 +1,218 @@
 [
-  { "texto": "{player} envía un mensaje atrevido" },
-  { "texto": "Todos eligen a alguien y le hacen un piropo" },
-  { "texto": "{player} muestra un secreto" }
+  {
+    "texto": "{player} envía un mensaje atrevido a quien el grupo decida, o bebe 2 tragos"
+  },
+  { "texto": "{player} cuenta un secreto, o bebe 2 tragos" },
+  {
+    "texto": "👕 {player} se tiene que quitar una prenda a elegir entre camiseta, pantalón o ropa interior",
+    "repetible": true
+  },
+  {
+    "texto": "🔥 {player} y {player2} se tienen que dar el lote durante 1 minuto entero delante de todo el grupo, o beben 4 tragos cada uno",
+    "genero": "hombre",
+    "genero2": "mujer"
+  },
+  {
+    "texto": "🔥 {player} y {player2} se tienen que dar el lote durante 1 minuto entero delante de todo el grupo, o beben 4 tragos cada uno",
+    "genero": "hombre",
+    "genero2": "hombre"
+  },
+  {
+    "texto": "🔥 {player} y {player2} se tienen que dar el lote durante 1 minuto entero delante de todo el grupo, o beben 4 tragos cada uno",
+    "genero": "mujer",
+    "genero2": "mujer"
+  },
+  {
+    "texto": "🔥 {player} se tiene que desnudar por completo, o se acaba la copa"
+  },
+  {
+    "texto": "🙈 {player} tiene que dejar ver sus partes íntimas a quien quiera mirar, o bebe 5 tragos"
+  },
+  {
+    "texto": "😂 {player} tiene que contar la historia sexual más graciosa que tenga, o bebe 2 tragos"
+  },
+  {
+    "texto": "📞 {player} tiene que llamar a su ex y ponerlo en altavoz, o bebe 3 tragos si no tiene"
+  },
+  {
+    "texto": "💘 {player} tiene que abrir la Play Store o App Store delante de todos y comprobar si tiene alguna app de ligar instalada, o bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he follado. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he follado en un sitio público. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he tenido un rollo de una noche. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he enviado una foto subida de tono. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca me he liado con el ex de un amigo o amiga. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he fingido un orgasmo. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he tenido un trío. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he hecho sexting con un desconocido. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he follado en casa de mis padres estando ellos. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he usado una app de ligar teniendo pareja. Bebe 3 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que tenga una ETS? Bebe 3 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que haya engañado a su pareja? Bebe 3 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que se líe esta noche con alguien de aquí? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que tenga una app de ligar? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que haya tenido sexo en el trabajo? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que mande nudes? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que tenga un fetiche raro? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que se líe con su ex otra vez? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que tenga más de un ligue a la vez ahora mismo? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que se haya liado con alguien de esta sala? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que tenga fotos comprometedoras en el móvil? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que haya pagado por contenido para adultos? Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 {player} tiene que decir la postura sexual que más le gusta, o bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 {player} tiene que contar el sitio más raro donde se ha liado con alguien, o bebe 2 tragos"
+  },
+  {
+    "texto": "👀 {player} tiene que decir a quién de la sala se ha imaginado alguna vez desnudo/a, o bebe 3 tragos"
+  },
+  {
+    "texto": "😬 {player} tiene que contar su peor cita, o bebe 2 tragos"
+  },
+  {
+    "texto": "🤐 {player} tiene que confesar si alguna vez ha puesto los cuernos a alguien, o bebe 3 tragos"
+  },
+  {
+    "texto": "🔥 {player} tiene que contar su mayor fantasía sexual, o bebe 3 tragos"
+  },
+  {
+    "texto": "📱 {player} tiene que enseñar su historial de búsqueda de las últimas 24 horas, o bebe 3 tragos"
+  },
+  {
+    "texto": "🍑 {player} tiene que dejarse dar un azote por quien el grupo decida, o bebe 2 tragos"
+  },
+  {
+    "texto": "💃 {player} tiene que hacer un mini striptease de 15 segundos, o bebe 3 tragos"
+  },
+  {
+    "texto": "🔥 {player} y {player2} tienen que bailar de forma sugerente 15 segundos, o beben 2 tragos cada uno"
+  },
+  {
+    "texto": "💜 {player} tiene que dejar que alguien le haga un chupetón, o bebe 3 tragos"
+  },
+  {
+    "texto": "🙈 {player} tiene que dejarse vendar los ojos y adivinar quién le toca la cara, o bebe 2 tragos"
+  },
+  {
+    "texto": "👑 {player} tiene que ser \"esclavo/a\" de otro jugador durante 3 rondas (hace lo que le pida), o bebe 3 tragos"
+  },
+  {
+    "texto": "🙈 {player} se venda los ojos y tiene que adivinar quién le da un beso, o bebe 2 tragos"
+  },
+  {
+    "texto": "👅 {player} se venda los ojos y tiene que adivinar quién le lame el cuello, o bebe 3 tragos"
+  },
+  {
+    "texto": "🙈 {player} se venda los ojos y tiene que adivinar quién le está tocando, o bebe 2 tragos"
+  },
+  {
+    "texto": "😏 {player} tiene que decir a quién de los jugadores se follaría, o bebe 3 tragos"
+  },
+  {
+    "texto": "🙅 {player} tiene que decir con quién de los jugadores nunca se liaría, o bebe 2 tragos"
+  },
+  {
+    "texto": "🔥 {player} tiene que decir quién de los jugadores le parece más atractivo/a, o bebe 2 tragos"
+  },
+  {
+    "texto": "💋 {player} tiene que decir a quién de los jugadores besaría ahora mismo, o bebe 3 tragos"
+  },
+  {
+    "texto": "🛏️ {player} tiene que decir con quién de los jugadores pasaría la noche, o bebe 3 tragos"
+  },
+  {
+    "texto": "👅 {player} tiene que decir quién de los jugadores cree que besa mejor, o bebe 2 tragos"
+  },
+  {
+    "texto": "🏝️ {player} tiene que decir con qué jugador se quedaría si tuviera que elegir uno para una isla desierta, o bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca me liaría con alguien de los jugadores. Quien piense que sí bebe 2 tragos"
+  },
+  {
+    "texto": "👕 {player} elige a otro jugador para que se quite la prenda que {player} decida",
+    "repetible": true
+  },
+  {
+    "texto": "💋 {player} elige a otro jugador para besarlo donde {player} decida, o bebe 3 tragos"
+  },
+  {
+    "texto": "👀 {player} elige a otro jugador para enseñarle una foto comprometida de su galería, o bebe 2 tragos"
+  },
+  {
+    "texto": "🤫 {player} elige a otro jugador para confesarle un secreto al oído, o bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he tenido sexo con alguien de este grupo. Bebe 3 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he mentido sobre cuántas parejas sexuales he tenido. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca me he masturbado pensando en alguien de este grupo. Bebe 3 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he tenido sexo el mismo día que conocí a esa persona. Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que tenga una noche de tres? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que se líe con un desconocido en el baño de una discoteca? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que tenga contenido subido de tono en internet? Bebe 2 tragos"
+  },
+  {
+    "texto": "😏 {player} tiene que decir a qué jugador le tiraría los tejos si estuviera soltero/a, o bebe 3 tragos"
+  },
+  {
+    "texto": "👀 {player} tiene que decir qué jugador tiene la mirada más sexy, o bebe 2 tragos"
+  }
 ]

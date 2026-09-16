@@ -6,7 +6,9 @@ export type ModoJuego = "fiesta" | "hot";
 
 type RetoJson = {
   texto: string;
-  genero?: Genero;
+  genero?: Genero; // restringe el género de {player}
+  genero2?: Genero; // restringe el género de {player2}
+  repetible?: boolean; // no se marca como usado: puede volver a salir en la misma partida
 };
 
 export type Reto = RetoJson & {
@@ -34,6 +36,7 @@ export const obtenerRetos = (modo: ModoJuego, jugadores: Jugador[] = []): Reto[]
   );
   return retos.filter((reto) => {
     if (reto.genero && !generosPresentes.has(reto.genero)) return false;
+    if (reto.genero2 && !generosPresentes.has(reto.genero2)) return false;
     if (reto.texto.includes("{player2}") && jugadores.length < 2) return false;
     return true;
   });

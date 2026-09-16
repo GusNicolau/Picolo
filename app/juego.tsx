@@ -19,7 +19,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import BotonVolver from "../src/components/BotonVolver";
-import { Jugador, usePlayers } from "../src/context/PlayersContext";
+import { Genero, Jugador, usePlayers } from "../src/context/PlayersContext";
 import { obtenerRetos } from "../src/controllers/retosController";
 
 const avatarPorDefecto = require("../assets/moustache/gustavo.webp");
@@ -121,9 +121,14 @@ export default function JuegoScreen() {
   };
 
   // Sortea un segundo jugador distinto del primero, para retos de pareja
-  // (ej. "{player} y {player2} se tienen que besar").
-  const elegirSegundoJugador = (excluir: Jugador) => {
-    const candidatos = jugadores.filter((j) => j.nombre !== excluir.nombre);
+  // (ej. "{player} y {player2} se tienen que besar"). Si el reto exige un
+  // género concreto para {player2} (genero2), se sortea solo entre esos.
+  const elegirSegundoJugador = (excluir: Jugador, generoRequerido?: Genero) => {
+    const base = jugadores.filter((j) => j.nombre !== excluir.nombre);
+    const pool = generoRequerido
+      ? base.filter((j) => (j.genero ?? "inter") === generoRequerido)
+      : base;
+    const candidatos = pool.length > 0 ? pool : base;
     if (candidatos.length === 0) return null;
     return candidatos[Math.floor(Math.random() * candidatos.length)];
   };
@@ -175,12 +180,12 @@ export default function JuegoScreen() {
     nextFinRef.current = false;
 
     const retoAleatorio = disponibles[Math.floor(Math.random() * disponibles.length)];
-    retosUsadosRef.current.add(retoAleatorio.id);
+    if (!retoAleatorio.repetible) retosUsadosRef.current.add(retoAleatorio.id);
 
     const jugadorRandom = elegirJugadorParaReto(retoAleatorio);
     const requiereSegundo = retoAleatorio.texto.includes("{player2}");
     const jugador2Random = requiereSegundo
-      ? elegirSegundoJugador(jugadorRandom)
+      ? elegirSegundoJugador(jugadorRandom, retoAleatorio.genero2)
       : null;
     const texto = construirTexto(retoAleatorio.texto, jugadorRandom, jugador2Random);
 
@@ -208,11 +213,11 @@ export default function JuegoScreen() {
         return;
       }
       const retoAleatorio = disponibles[Math.floor(Math.random() * disponibles.length)];
-      retosUsadosRef.current.add(retoAleatorio.id);
+      if (!retoAleatorio.repetible) retosUsadosRef.current.add(retoAleatorio.id);
       const jugadorRandom = elegirJugadorParaReto(retoAleatorio);
       const requiereSegundo = retoAleatorio.texto.includes("{player2}");
       const jugador2Random = requiereSegundo
-        ? elegirSegundoJugador(jugadorRandom)
+        ? elegirSegundoJugador(jugadorRandom, retoAleatorio.genero2)
         : null;
       setJugadorActual(jugadorRandom);
       setJugadorActual2(jugador2Random);
