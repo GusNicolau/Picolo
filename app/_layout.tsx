@@ -7,11 +7,13 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import BotonVolver from "@/src/components/BotonVolver";
+import LoadingScreen from "@/src/components/LoadingScreen";
 import { PlayersProvider } from "@/src/context/PlayersContext";
 import { SettingsProvider } from "@/src/context/SettingsContext";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const [showLoading, setShowLoading] = React.useState(true);
 
   // La app siempre usa tema oscuro: forzamos el fondo nativo de la ventana raíz
   // para que no aparezca un flash blanco al navegar entre pantallas.
@@ -54,6 +56,10 @@ export default function RootLayout() {
             <BotonVolver />
             <StatusBar style="light" />
           </ThemeProvider>
+
+          {showLoading && (
+            <LoadingScreen onFinish={() => setShowLoading(false)} />
+          )}
         </GestureHandlerRootView>
       </PlayersProvider>
     </SettingsProvider>
