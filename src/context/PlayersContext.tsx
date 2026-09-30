@@ -11,6 +11,10 @@ export type Jugador = {
   avatar?: any;       // require(...) result
   avatarName?: string; // ej. "Gustavo", "Mario"
   genero?: Genero;
+  // Código oculto de la "ayuda asistida": si dos jugadores comparten el
+  // mismo número al final del nombre al añadirlos (ej. "Mario1"/"Maria1"),
+  // se extrae aquí y el nombre visible se queda limpio ("Mario"/"Maria").
+  codigoPareja?: string;
 };
 
 type PlayersContextType = {

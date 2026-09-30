@@ -1,14 +1,13 @@
-import { Genero, Jugador } from "../context/PlayersContext";
+import { Genero, Jugador, ModoJuego } from "../context/PlayersContext";
 import fiesta from "../data/fiesta.json";
 import hot from "../data/hot.json";
-
-export type ModoJuego = "fiesta" | "hot";
 
 type RetoJson = {
   texto: string;
   genero?: Genero; // restringe el género de {player}
   genero2?: Genero; // restringe el género de {player2}
   repetible?: boolean; // no se marca como usado: puede volver a salir en la misma partida
+  parejaAsistida?: boolean; // reto de pareja bueno para favorecer a la ayuda asistida
 };
 
 export type Reto = RetoJson & {

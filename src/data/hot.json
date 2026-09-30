@@ -10,17 +10,20 @@
   {
     "texto": "🔥 {player} y {player2} se tienen que dar el lote durante 1 minuto entero delante de todo el grupo, o beben 4 tragos cada uno",
     "genero": "hombre",
-    "genero2": "mujer"
+    "genero2": "mujer",
+    "parejaAsistida": true
   },
   {
     "texto": "🔥 {player} y {player2} se tienen que dar el lote durante 1 minuto entero delante de todo el grupo, o beben 4 tragos cada uno",
     "genero": "hombre",
-    "genero2": "hombre"
+    "genero2": "hombre",
+    "parejaAsistida": true
   },
   {
     "texto": "🔥 {player} y {player2} se tienen que dar el lote durante 1 minuto entero delante de todo el grupo, o beben 4 tragos cada uno",
     "genero": "mujer",
-    "genero2": "mujer"
+    "genero2": "mujer",
+    "parejaAsistida": true
   },
   {
     "texto": "🔥 {player} se tiene que desnudar por completo, o se acaba la copa"
@@ -131,7 +134,8 @@
     "texto": "💃 {player} tiene que hacer un mini striptease de 15 segundos, o bebe 3 tragos"
   },
   {
-    "texto": "🔥 {player} y {player2} tienen que bailar de forma sugerente 15 segundos, o beben 2 tragos cada uno"
+    "texto": "🔥 {player} y {player2} tienen que bailar de forma sugerente 15 segundos, o beben 2 tragos cada uno",
+    "parejaAsistida": true
   },
   {
     "texto": "💜 {player} tiene que dejar que alguien le haga un chupetón, o bebe 3 tragos"
@@ -214,5 +218,113 @@
   },
   {
     "texto": "👀 {player} tiene que decir qué jugador tiene la mirada más sexy, o bebe 2 tragos"
+  },
+  {
+    "texto": "🔥 {player} tiene que susurrarle algo subido de tono al oído a {player2}, o bebe 3 tragos",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "👙 {player} tiene que enseñar la ropa interior que lleva puesta, o bebe 3 tragos"
+  },
+  {
+    "texto": "😏 {player} tiene que confesar cuál es su mayor tabú sexual, o bebe 3 tragos"
+  },
+  {
+    "texto": "🍑 {player} tiene que sentarse en las piernas de {player2} durante 2 rondas, o beben 2 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "💆 {player} tiene que dejar que {player2} le dé un masaje en los hombros de 30 segundos, o beben 2 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "📲 {player} tiene que enseñar la conversación más picante de su móvil (o inventarse una si no tiene), o bebe 3 tragos"
+  },
+  {
+    "texto": "💌 {player} tiene que leer en voz alta el último mensaje que le envió a alguien que le gusta o le gustó, o bebe 3 tragos"
+  },
+  {
+    "texto": "🔥 {player} tiene que decir qué prenda de otro jugador le gustaría quitarle, o bebe 2 tragos"
+  },
+  {
+    "texto": "😳 {player} tiene que confesar la mentira más grande que ha dicho para ligar, o bebe 2 tragos"
+  },
+  {
+    "texto": "✍️ {player} deja que el grupo le pinte algo con rotulador encima de la ropa, donde decidan, o bebe 3 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he tenido sexo en un coche. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he tenido un sueño subido de tono con alguien de este grupo. Bebe 3 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he enviado una foto subida de tono sin que me la pidieran. Bebe 2 tragos"
+  },
+  {
+    "texto": "🙊 Todos: yo nunca he tenido una fantasía con un profesor. Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que tenga una lista de fantasías sexuales muy larga? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que grabe contenido subido de tono? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que tenga un crush secreto en este grupo? Bebe 2 tragos"
+  },
+  {
+    "texto": "🤔 Todos: ¿quién es más probable que haya tenido una cita a ciegas? Bebe 2 tragos"
+  },
+  {
+    "texto": "🔥 {player} tiene que decir a qué jugador le mandaría un mensaje a las 3 de la madrugada, o bebe 2 tragos"
+  },
+  {
+    "texto": "😏 {player} tiene que decir qué jugador le pondría más nervioso/a quedarse a solas con él/ella, o bebe 2 tragos"
+  },
+  {
+    "texto": "👄 {player} le quita una prenda a {player2} usando solo la boca (sin manos), o beben 3 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "👕 {player} elige qué prenda se tiene que quitar {player2}",
+    "repetible": true,
+    "parejaAsistida": true
+  },
+  {
+    "texto": "🔥 {player} tiene que desabrochar el primer botón o cierre de la ropa de {player2} con los dientes, o beben 3 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "💋 {player} tiene que besar a {player2} en el sitio que decida el resto del grupo, o beben 2 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "👠 {player} le tiene que quitar un zapato a {player2} usando solo la boca, o beben 2 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "🔥 {player} tiene que morder suavemente el labio de {player2}, o beben 2 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "🧊 {player} y {player2} tienen que besarse con un cubito de hielo en la boca, o beben 3 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "🔥 {player} tiene que darle un beso a {player2} en el cuello, o beben 2 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "💃 {player} y {player2} tienen que bailar muy pegados durante 30 segundos, o beben 3 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "👅 {player} tiene que recorrer con la lengua la espalda de {player2} durante 10 segundos, o beben 2 tragos cada uno",
+    "parejaAsistida": true
+  },
+  {
+    "texto": "🔥 {player} tiene que susurrarle al oído a {player2} cuál es la parte de su cuerpo que más le gusta, o beben 2 tragos cada uno",
+    "parejaAsistida": true
   }
 ]

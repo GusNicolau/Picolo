@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import * as SystemUI from "expo-system-ui";
 import { StatusBar } from "expo-status-bar";
@@ -6,14 +7,29 @@ import { BackHandler, Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import AgeGateScreen from "@/src/components/AgeGateScreen";
 import BotonVolver from "@/src/components/BotonVolver";
 import LoadingScreen from "@/src/components/LoadingScreen";
 import { PlayersProvider } from "@/src/context/PlayersContext";
 import { SettingsProvider } from "@/src/context/SettingsContext";
 
+const STORAGE_KEY_AGE_CONFIRMED = "@picolo/age_confirmed";
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [showLoading, setShowLoading] = React.useState(true);
+  const [edadConfirmada, setEdadConfirmada] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    AsyncStorage.getItem(STORAGE_KEY_AGE_CONFIRMED)
+      .then((value) => setEdadConfirmada(value === "true"))
+      .catch(() => setEdadConfirmada(false));
+  }, []);
+
+  const confirmarEdad = () => {
+    setEdadConfirmada(true);
+    AsyncStorage.setItem(STORAGE_KEY_AGE_CONFIRMED, "true").catch(() => {});
+  };
 
   // La app siempre usa tema oscuro: forzamos el fondo nativo de la ventana raíz
   // para que no aparezca un flash blanco al navegar entre pantallas.
@@ -57,8 +73,11 @@ export default function RootLayout() {
             <StatusBar style="light" />
           </ThemeProvider>
 
-          {showLoading && (
+          {(showLoading || edadConfirmada === null) && (
             <LoadingScreen onFinish={() => setShowLoading(false)} />
+          )}
+          {!showLoading && edadConfirmada === false && (
+            <AgeGateScreen onConfirm={confirmarEdad} />
           )}
         </GestureHandlerRootView>
       </PlayersProvider>

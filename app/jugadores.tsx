@@ -10,15 +10,10 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 import { useSettings } from "../src/context/SettingsContext";
-
-
-
-
-
 
 import { Genero, Jugador, usePlayers } from "../src/context/PlayersContext";
 
@@ -28,9 +23,24 @@ const generoOpciones: {
   colorSeleccionado: string;
   iconColorSeleccionado: string;
 }[] = [
-  { key: "hombre", icon: "gender-male", colorSeleccionado: "#3E7BFA", iconColorSeleccionado: "#FFFFFF" },
-  { key: "mujer", icon: "gender-female", colorSeleccionado: "#F2578F", iconColorSeleccionado: "#FFFFFF" },
-  { key: "inter", icon: "gender-non-binary", colorSeleccionado: "#F2A93B", iconColorSeleccionado: "#1C1408" },
+  {
+    key: "hombre",
+    icon: "gender-male",
+    colorSeleccionado: "#3E7BFA",
+    iconColorSeleccionado: "#FFFFFF",
+  },
+  {
+    key: "mujer",
+    icon: "gender-female",
+    colorSeleccionado: "#F2578F",
+    iconColorSeleccionado: "#FFFFFF",
+  },
+  {
+    key: "inter",
+    icon: "gender-non-binary",
+    colorSeleccionado: "#F2A93B",
+    iconColorSeleccionado: "#1C1408",
+  },
 ];
 
 // Mapa de avatares de amigos predefinidos (requiere el código "moustache" para desbloquearse)
@@ -49,15 +59,38 @@ const avataresAmigos: Record<string, any> = {
 // Pool de avatares disponibles por defecto (animales, sin desbloquear nada)
 const avataresAnimales: any[] = [
   require("../assets/avatares/rana.webp"),
-  require("../assets/avatares/caballo.webp"),
   require("../assets/avatares/oveja.webp"),
   require("../assets/avatares/perro.webp"),
   require("../assets/avatares/gata.webp"),
   require("../assets/avatares/elefante.webp"),
   require("../assets/avatares/panda.webp"),
   require("../assets/avatares/zorra.webp"),
+  require("../assets/avatares/caballo.webp"),
+
   require("../assets/avatares/loro.webp"),
+  require("../assets/avatares/conejo.webp"),
+  require("../assets/avatares/alien.webp"),
+  require("../assets/avatares/ballena.webp"),
+  require("../assets/avatares/buho.webp"),
+  require("../assets/avatares/gallo.webp"),
+  require("../assets/avatares/lagarto.webp"),
+  require("../assets/avatares/lobo.webp"),
+  require("../assets/avatares/murcielago.webp"),
+  require("../assets/avatares/robot.webp"),
+  require("../assets/avatares/tortuga.webp"),
 ];
+
+// "Ayuda asistida": si el nombre termina en número (ej. "Mario1"), ese
+// número se extrae como código oculto y no se muestra — el nombre visible
+// se queda limpio ("Mario"). Dos jugadores con el mismo código se
+// favorecen entre sí en los retos de pareja (ver app/juego.tsx).
+const extraerCodigoPareja = (input: string): { nombre: string; codigo?: string } => {
+  const match = input.match(/(\d+)\s*$/);
+  if (!match || match.index === undefined) return { nombre: input };
+  const base = input.slice(0, match.index).trim();
+  if (!base) return { nombre: input };
+  return { nombre: base, codigo: match[1] };
+};
 
 export default function JugadoresScreen() {
   const [nombre, setNombre] = useState("");
@@ -78,7 +111,7 @@ export default function JugadoresScreen() {
       moustacheUnlocked
         ? [...avataresAnimales, ...Object.values(avataresAmigos)]
         : avataresAnimales,
-    [moustacheUnlocked]
+    [moustacheUnlocked],
   );
 
   const elegirAvatarAleatorio = () => {
@@ -89,22 +122,28 @@ export default function JugadoresScreen() {
   };
 
   const añadirJugador = () => {
-    const trimmed = nombre.trim();
-    if (!trimmed) return;
+    const trimmedInput = nombre.trim();
+    if (!trimmedInput) return;
 
-    if (jugadores.some((j) => j.nombre.toLowerCase() === trimmed.toLowerCase())) {
+    const { nombre: trimmed, codigo: codigoPareja } = extraerCodigoPareja(trimmedInput);
+
+    if (
+      jugadores.some((j) => j.nombre.toLowerCase() === trimmed.toLowerCase())
+    ) {
       Alert.alert("Nombre repetido", "Ya existe un jugador con ese nombre.");
       return;
     }
 
     const avatarAmigo = moustacheUnlocked ? avataresAmigos[trimmed] : undefined;
     const avataresUsados = jugadores.map((j) => j.avatar);
-    const avatarAmigoDisponible = avatarAmigo && !avataresUsados.includes(avatarAmigo);
+    const avatarAmigoDisponible =
+      avatarAmigo && !avataresUsados.includes(avatarAmigo);
     const nuevoJugador: Jugador = {
       nombre: trimmed,
       avatar: avatarAmigoDisponible ? avatarAmigo : elegirAvatarAleatorio(),
       avatarName: avatarAmigoDisponible ? trimmed : undefined,
       genero: "inter",
+      codigoPareja,
     };
     addJugador(nuevoJugador);
     setNombre("");
@@ -120,16 +159,21 @@ export default function JugadoresScreen() {
   };
 
   const confirmarEdicionNombre = (nombreActual: string) => {
-    const trimmed = editingValue.trim();
-    if (!trimmed || trimmed === nombreActual) {
+    const trimmedInput = editingValue.trim();
+    if (!trimmedInput || trimmedInput === nombreActual) {
       setEditingName(null);
       return;
     }
-    if (jugadores.some((j) => j.nombre.toLowerCase() === trimmed.toLowerCase())) {
+    const { nombre: trimmed, codigo: codigoPareja } = extraerCodigoPareja(trimmedInput);
+    if (
+      jugadores.some(
+        (j) => j.nombre !== nombreActual && j.nombre.toLowerCase() === trimmed.toLowerCase()
+      )
+    ) {
       Alert.alert("Nombre repetido", "Ya existe un jugador con ese nombre.");
       return;
     }
-    editJugador(nombreActual, { nombre: trimmed });
+    editJugador(nombreActual, { nombre: trimmed, codigoPareja });
     setEditingName(null);
   };
 
@@ -139,7 +183,7 @@ export default function JugadoresScreen() {
 
   const confirmarCambioAvatar = (nombreJugador: string, nuevoAvatar: any) => {
     const enUsoPorOtro = jugadores.some(
-      (j) => j.nombre !== nombreJugador && j.avatar === nuevoAvatar
+      (j) => j.nombre !== nombreJugador && j.avatar === nuevoAvatar,
     );
     if (enUsoPorOtro) return;
     editJugador(nombreJugador, { avatar: nuevoAvatar, avatarName: undefined });
@@ -175,7 +219,10 @@ export default function JugadoresScreen() {
             onChangeText={setNombre}
             onSubmitEditing={añadirJugador}
           />
-          <TouchableOpacity style={styles.addButtonSmall} onPress={añadirJugador}>
+          <TouchableOpacity
+            style={styles.addButtonSmall}
+            onPress={añadirJugador}
+          >
             <Text style={styles.addButtonText}>+</Text>
           </TouchableOpacity>
         </View>
@@ -187,7 +234,6 @@ export default function JugadoresScreen() {
           <Text style={styles.moustacheButtonText}>Avatares</Text>
         </TouchableOpacity>
 
-
         <FlatList
           data={jugadores}
           keyExtractor={(item, index) => index.toString()}
@@ -196,7 +242,10 @@ export default function JugadoresScreen() {
             <View style={styles.playerContainer}>
               <View style={styles.playerTopRow}>
                 <TouchableOpacity onPress={() => setEditingAvatar(item.nombre)}>
-                  <Image source={item.avatar || avataresAnimales[0]} style={styles.avatar} />
+                  <Image
+                    source={item.avatar || avataresAnimales[0]}
+                    style={styles.avatar}
+                  />
                   <View style={styles.avatarEditBadge}>
                     <Text style={styles.avatarEditBadgeText}>✏️</Text>
                   </View>
@@ -215,8 +264,15 @@ export default function JugadoresScreen() {
                     textAlign="center"
                   />
                 ) : (
-                  <TouchableOpacity style={styles.nameWrapper} onPress={() => empezarEdicionNombre(item.nombre)}>
-                    <Text style={styles.player} numberOfLines={1} ellipsizeMode="tail">
+                  <TouchableOpacity
+                    style={styles.nameWrapper}
+                    onPress={() => empezarEdicionNombre(item.nombre)}
+                  >
+                    <Text
+                      style={styles.player}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
                       {item.nombre}
                     </Text>
                   </TouchableOpacity>
@@ -235,19 +291,28 @@ export default function JugadoresScreen() {
                             borderColor: opcion.colorSeleccionado,
                           },
                         ]}
-                        onPress={() => seleccionarGenero(item.nombre, opcion.key)}
+                        onPress={() =>
+                          seleccionarGenero(item.nombre, opcion.key)
+                        }
                       >
                         <MaterialCommunityIcons
                           name={opcion.icon}
                           size={16}
-                          color={isSelected ? opcion.iconColorSeleccionado : COLORS.textMuted}
+                          color={
+                            isSelected
+                              ? opcion.iconColorSeleccionado
+                              : COLORS.textMuted
+                          }
                         />
                       </TouchableOpacity>
                     );
                   })}
                 </View>
 
-                <TouchableOpacity style={styles.deleteButton} onPress={() => eliminarJugador(item.nombre)}>
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={() => eliminarJugador(item.nombre)}
+                >
                   <Text style={styles.delete}>✕</Text>
                 </TouchableOpacity>
               </View>
@@ -272,10 +337,12 @@ export default function JugadoresScreen() {
                 numColumns={4}
                 contentContainerStyle={styles.avatarGrid}
                 renderItem={({ item }) => {
-                  const jugadorActual = jugadores.find((j) => j.nombre === editingAvatar);
+                  const jugadorActual = jugadores.find(
+                    (j) => j.nombre === editingAvatar,
+                  );
                   const isSelected = jugadorActual?.avatar === item;
                   const enUsoPorOtro = jugadores.some(
-                    (j) => j.nombre !== editingAvatar && j.avatar === item
+                    (j) => j.nombre !== editingAvatar && j.avatar === item,
                   );
                   return (
                     <TouchableOpacity
@@ -302,7 +369,10 @@ export default function JugadoresScreen() {
                   );
                 }}
               />
-              <TouchableOpacity style={styles.avatarModalClose} onPress={() => setEditingAvatar(null)}>
+              <TouchableOpacity
+                style={styles.avatarModalClose}
+                onPress={() => setEditingAvatar(null)}
+              >
                 <Text style={styles.avatarModalCloseText}>Cancelar</Text>
               </TouchableOpacity>
             </View>

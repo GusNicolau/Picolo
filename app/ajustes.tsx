@@ -1,6 +1,8 @@
+import Slider from "@react-native-community/slider";
 import { useState } from "react";
 import {
   ImageBackground,
+  Modal,
   StyleSheet,
   Switch,
   Text,
@@ -11,9 +13,17 @@ import {
 import { useSettings } from "../src/context/SettingsContext";
 
 export default function AjustesScreen() {
-  const { soundEnabled, setSoundEnabled, moustacheUnlocked, canjearCodigo } = useSettings();
+  const {
+    soundEnabled,
+    setSoundEnabled,
+    soundVolume,
+    setSoundVolume,
+    moustacheUnlocked,
+    canjearCodigo,
+  } = useSettings();
   const [codigo, setCodigo] = useState("");
   const [mensaje, setMensaje] = useState<{ texto: string; ok: boolean } | null>(null);
+  const [ayudaVisible, setAyudaVisible] = useState(false);
 
   const enviarCodigo = () => {
     const trimmed = codigo.trim();
@@ -46,6 +56,21 @@ export default function AjustesScreen() {
               onValueChange={setSoundEnabled}
               trackColor={{ false: "#3A3A42", true: COLORS.accentSoft }}
               thumbColor={soundEnabled ? COLORS.accent : "#9A9AA5"}
+            />
+          </View>
+
+          <View style={styles.volumeRow}>
+            <Text style={styles.rowLabel}>Volumen</Text>
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              maximumValue={1}
+              value={soundVolume}
+              onSlidingComplete={setSoundVolume}
+              disabled={!soundEnabled}
+              minimumTrackTintColor={COLORS.accent}
+              maximumTrackTintColor="#3A3A42"
+              thumbTintColor={COLORS.accent}
             />
           </View>
         </View>
@@ -85,7 +110,52 @@ export default function AjustesScreen() {
             </>
           )}
         </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Extra</Text>
+          <TouchableOpacity
+            style={styles.ayudaButton}
+            onPress={() => setAyudaVisible(true)}
+          >
+            <Text style={styles.ayudaButtonText}>🤫 Ayuda asistida</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
+      <Modal
+        visible={ayudaVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setAyudaVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>🤫 Ayuda asistida</Text>
+            <Text style={styles.modalText}>
+              Esto es, básicamente, hacer trampa: una forma de que dos
+              jugadores acaben más veces juntos en los retos de pareja, sin
+              que el resto del grupo se entere.
+            </Text>
+            <Text style={styles.modalText}>
+              Al añadir a los jugadores, poned el mismo número al final de
+              los dos nombres (por ejemplo “Mario1” y “Maria1”). Ese número
+              desaparece del nombre visible, pero queda guardado: durante la
+              partida, esos dos jugadores tendrán más probabilidades de salir
+              juntos en los retos que requieren dos personas.
+            </Text>
+            <Text style={styles.modalText}>
+              No está garantizado al 100% — sigue habiendo algo de azar para
+              que no se note demasiado.
+            </Text>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setAyudaVisible(false)}
+            >
+              <Text style={styles.modalCloseButtonText}>Entendido</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ImageBackground>
   );
 }
@@ -145,6 +215,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  volumeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 14,
+  },
+  slider: {
+    flex: 1,
+    marginLeft: 16,
+    height: 40,
+  },
   rowLabel: {
     fontSize: 16,
     color: COLORS.text,
@@ -189,5 +270,60 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: COLORS.accent,
     textAlign: "center",
+  },
+  ayudaButton: {
+    backgroundColor: "transparent",
+    borderColor: COLORS.accentSoft,
+    borderWidth: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    width: "100%",
+    alignItems: "center",
+  },
+  ayudaButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: COLORS.accent,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.8)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24,
+  },
+  modalCard: {
+    width: "100%",
+    maxWidth: 380,
+    backgroundColor: COLORS.card,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: COLORS.accentSoft,
+    padding: 22,
+  },
+  modalTitle: {
+    fontSize: 19,
+    fontWeight: "800",
+    color: COLORS.accent,
+    textAlign: "center",
+    marginBottom: 14,
+  },
+  modalText: {
+    fontSize: 14,
+    color: COLORS.text,
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  modalCloseButton: {
+    marginTop: 8,
+    backgroundColor: COLORS.accent,
+    paddingVertical: 13,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalCloseButtonText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: COLORS.accentOn,
   },
 });

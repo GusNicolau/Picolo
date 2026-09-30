@@ -1,5 +1,6 @@
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Asset } from "expo-asset"; // <-- precarga imágenes
+import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -21,8 +22,9 @@ import {
 import BotonVolver from "../src/components/BotonVolver";
 import { Genero, Jugador, usePlayers } from "../src/context/PlayersContext";
 import { obtenerRetos } from "../src/controllers/retosController";
+import { playSound } from "../src/soundManager";
 
-const avatarPorDefecto = require("../assets/moustache/gustavo.webp");
+const avatarPorDefecto = require("../assets/avatares/rana.webp");
 
 // Distancia mínima de arrastre para aceptar/rechazar el reto (evita que un
 // gesto pequeño se confunda con un swipe intencionado)
@@ -48,6 +50,10 @@ export default function JuegoScreen() {
   const [rachaMaxima, setRachaMaxima] = useState(0);
   // Racha individual: aciertos seguidos de cada jugador en sus propios turnos
   const [rachasIndividuales, setRachasIndividuales] = useState<
+    Record<string, number>
+  >({});
+  // La racha individual más alta que ha alcanzado cada jugador en toda la partida
+  const [rachasMaximasIndividuales, setRachasMaximasIndividuales] = useState<
     Record<string, number>
   >({});
   const [shakeIndividualAnim] = useState(() => new Animated.Value(0));
@@ -110,19 +116,64 @@ export default function JuegoScreen() {
   const retosDisponibles = () =>
     retos.filter((r) => !retosUsadosRef.current.has(r.id));
 
+  // Probabilidad de que la "ayuda asistida" (ver Ajustes) se salga con la
+  // suya al sesgar un sorteo. No es 100% a propósito: si siempre saliera
+  // la misma pareja sería demasiado evidente para el resto del grupo.
+  const PROBABILIDAD_SESGO_PAREJA = 0.65;
+
+  // ¿Hay al menos dos jugadores con el mismo código de pareja (ayuda
+  // asistida activa)? Si no hay ninguna pareja marcada, no se sesga nada.
+  const hayParejaAsistidaActiva = () => {
+    const codigos = jugadores.map((j) => j.codigoPareja).filter(Boolean) as string[];
+    return codigos.some((c, i) => codigos.indexOf(c) !== i);
+  };
+
+  const tieneParejaEnJuego = (jugador: Jugador) => {
+    if (!jugador.codigoPareja) return false;
+    return jugadores.some(
+      (j) => j.nombre !== jugador.nombre && j.codigoPareja === jugador.codigoPareja
+    );
+  };
+
+  // Elige el siguiente reto del pool de disponibles. Si la ayuda asistida
+  // está activa, los retos de pareja marcados como buenos para ella
+  // ("parejaAsistida") se repiten en el pool para que salgan más a menudo.
+  const elegirRetoAleatorio = (disponibles: (typeof retos)[number][]) => {
+    if (!hayParejaAsistidaActiva()) {
+      return disponibles[Math.floor(Math.random() * disponibles.length)];
+    }
+    const destacados = disponibles.filter(
+      (r) => r.parejaAsistida && r.texto.includes("{player2}")
+    );
+    const pool = [...disponibles, ...destacados, ...destacados];
+    return pool[Math.floor(Math.random() * pool.length)];
+  };
+
   // Sortea el jugador que protagoniza un reto. Si el reto exige un género
   // concreto (ej. "Las chicas beben"), se sortea solo entre esos jugadores.
+  // En retos de pareja, favorece (sin garantizarlo) a quien tenga una
+  // "ayuda asistida" activa, para que acabe jugando con su código.
   const elegirJugadorParaReto = (reto: (typeof retos)[number]) => {
     const pool = reto.genero
       ? jugadores.filter((j) => (j.genero ?? "inter") === reto.genero)
       : jugadores;
     const candidatos = pool.length > 0 ? pool : jugadores;
+
+    if (reto.texto.includes("{player2}")) {
+      const conPareja = candidatos.filter(tieneParejaEnJuego);
+      if (conPareja.length > 0 && Math.random() < PROBABILIDAD_SESGO_PAREJA) {
+        return conPareja[Math.floor(Math.random() * conPareja.length)];
+      }
+    }
+
     return candidatos[Math.floor(Math.random() * candidatos.length)];
   };
 
   // Sortea un segundo jugador distinto del primero, para retos de pareja
   // (ej. "{player} y {player2} se tienen que besar"). Si el reto exige un
   // género concreto para {player2} (genero2), se sortea solo entre esos.
+  // Si el primer jugador tiene una "ayuda asistida" activa, favorece (sin
+  // garantizarlo) que le toque justo con quien comparte código.
   const elegirSegundoJugador = (excluir: Jugador, generoRequerido?: Genero) => {
     const base = jugadores.filter((j) => j.nombre !== excluir.nombre);
     const pool = generoRequerido
@@ -130,6 +181,14 @@ export default function JuegoScreen() {
       : base;
     const candidatos = pool.length > 0 ? pool : base;
     if (candidatos.length === 0) return null;
+
+    if (excluir.codigoPareja) {
+      const pareja = candidatos.find((j) => j.codigoPareja === excluir.codigoPareja);
+      if (pareja && Math.random() < PROBABILIDAD_SESGO_PAREJA) {
+        return pareja;
+      }
+    }
+
     return candidatos[Math.floor(Math.random() * candidatos.length)];
   };
 
@@ -179,7 +238,7 @@ export default function JuegoScreen() {
     }
     nextFinRef.current = false;
 
-    const retoAleatorio = disponibles[Math.floor(Math.random() * disponibles.length)];
+    const retoAleatorio = elegirRetoAleatorio(disponibles);
     if (!retoAleatorio.repetible) retosUsadosRef.current.add(retoAleatorio.id);
 
     const jugadorRandom = elegirJugadorParaReto(retoAleatorio);
@@ -212,7 +271,7 @@ export default function JuegoScreen() {
         setJuegoTerminado(true);
         return;
       }
-      const retoAleatorio = disponibles[Math.floor(Math.random() * disponibles.length)];
+      const retoAleatorio = elegirRetoAleatorio(disponibles);
       if (!retoAleatorio.repetible) retosUsadosRef.current.add(retoAleatorio.id);
       const jugadorRandom = elegirJugadorParaReto(retoAleatorio);
       const requiereSegundo = retoAleatorio.texto.includes("{player2}");
@@ -242,6 +301,8 @@ export default function JuegoScreen() {
       aplicarSiguienteEnPantalla(); // setear current = next
       prepararSiguiente(); // empezar a preparar el siguiente de nuevo
     })();
+    // Solo debe correr una vez al montar (primera carta de la partida)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -293,16 +354,30 @@ export default function JuegoScreen() {
   const handleSwipe = async (cumplido: boolean) => {
     if (!jugadorActual) return;
 
+    playSound(cumplido ? "correct" : "fail");
+    Haptics.notificationAsync(
+      cumplido
+        ? Haptics.NotificationFeedbackType.Success
+        : Haptics.NotificationFeedbackType.Error
+    ).catch(() => {});
+
     // 1) registrar resultado del reto actual
     registrarResultado(cumplido);
 
     // Racha individual del jugador actual (solo cuenta en sus propios turnos)
+    const nuevaRachaIndividual = cumplido
+      ? (rachasIndividuales[jugadorActual.nombre] || 0) + 1
+      : 0;
     setRachasIndividuales((prev) => ({
       ...prev,
-      [jugadorActual.nombre]: cumplido
-        ? (prev[jugadorActual.nombre] || 0) + 1
-        : 0,
+      [jugadorActual.nombre]: nuevaRachaIndividual,
     }));
+    if (nuevaRachaIndividual > (rachasMaximasIndividuales[jugadorActual.nombre] || 0)) {
+      setRachasMaximasIndividuales((prev) => ({
+        ...prev,
+        [jugadorActual.nombre]: nuevaRachaIndividual,
+      }));
+    }
 
     // Actualizar racha + animación cerveza progresiva
     if (cumplido) {
@@ -424,6 +499,7 @@ export default function JuegoScreen() {
       params: {
         resultados: JSON.stringify(resultados),
         rachaMaxima: String(rachaMaxima), // 👉 añadimos la racha máxima
+        rachasMaximasIndividuales: JSON.stringify(rachasMaximasIndividuales),
       },
     });
   };
