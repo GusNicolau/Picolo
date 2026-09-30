@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
@@ -14,7 +13,6 @@ import { usePlayers } from "../src/context/PlayersContext";
 export default function HomeScreen() {
   const router = useRouter();
   const { setModo } = usePlayers();
-  const colorScheme = useColorScheme();
 
   const seleccionarModo = (modo: "fiesta" | "hot") => {
     setModo(modo);
@@ -35,7 +33,7 @@ export default function HomeScreen() {
           ]}
           onPress={() => router.push("/ajustes")}
         >
-          <Ionicons name="settings-outline" size={26} color={COLORS.text} />
+          <Ionicons name="settings-outline" size={22} color={COLORS.text} />
         </Pressable>
 
         <Text style={styles.title}>PICOLO BATTLE</Text>
@@ -89,9 +87,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 60,
     right: 20,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: "rgba(255,255,255,0.06)",
     borderWidth: 1,
     borderColor: COLORS.accentSoft,

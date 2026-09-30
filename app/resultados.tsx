@@ -1,3 +1,4 @@
+import { FontAwesome5 } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
@@ -11,7 +12,13 @@ import {
 } from "react-native";
 import { usePlayers } from "../src/context/PlayersContext";
 
-const avatarPorDefecto = require("../assets/moustache/gustavo.webp");
+const medalla: Record<number, { icon: "crown" | "medal"; color: string }> = {
+  0: { icon: "crown", color: "#D4AF37" },
+  1: { icon: "medal", color: "#B8BEC7" },
+  2: { icon: "medal", color: "#C08A52" },
+};
+
+const avatarPorDefecto = require("../assets/avatares/rana.webp");
 
 type StatsJugador = { cumplidos: number; fallos: number };
 
@@ -23,6 +30,10 @@ export default function ResultadosScreen() {
     ? JSON.parse(params.resultados as string)
     : {};
   const { rachaMaxima } = useLocalSearchParams();
+  const rachasMaximasIndividuales: Record<string, number> =
+    params.rachasMaximasIndividuales
+      ? JSON.parse(params.rachasMaximasIndividuales as string)
+      : {};
 
   // Recuperamos el avatar real de cada jugador desde el contexto (los
   // resultados solo guardan nombre + estadísticas, no la imagen).
@@ -35,8 +46,10 @@ export default function ResultadosScreen() {
     ([, statsA], [, statsB]) => statsB.cumplidos - statsA.cumplidos
   );
 
-  const volverAJugadores = () => {
-    router.push("/jugadores");
+  const volverAlInicio = () => {
+    // dismissTo (en vez de replace) también descarta jugadores y juego del
+    // stack nativo, que si no se quedan apilados sin límite en cada partida
+    router.dismissTo("/");
   };
 
   return (
@@ -47,9 +60,12 @@ export default function ResultadosScreen() {
     >
       <View style={styles.overlay}>
         <Text style={styles.title}>Resultados finales</Text>
-        <Text style={styles.rachaText}>
-          🔥 Racha más alta: <Text style={styles.rachaValue}>{rachaMaxima}</Text>
-        </Text>
+        <View style={styles.rachaGlobalRow}>
+          <FontAwesome5 name="fire" size={18} color={COLORS.accent} />
+          <Text style={styles.rachaText}>
+            Racha más alta: <Text style={styles.rachaValue}>{rachaMaxima}</Text>
+          </Text>
+        </View>
         <FlatList
           data={jugadoresOrdenados}
           keyExtractor={([nombre]) => nombre}
@@ -62,27 +78,55 @@ export default function ResultadosScreen() {
                 index === 2 && styles.tercerLugar,
               ]}
             >
-              <Image
-                source={avatarPorNombre[nombre] || avatarPorDefecto}
-                style={styles.avatar}
-              />
-              <View style={{ flex: 1 }}>
+              <View style={styles.playerTopRow}>
+                <View style={styles.avatarWrapper}>
+                  <Image
+                    source={avatarPorNombre[nombre] || avatarPorDefecto}
+                    style={styles.avatar}
+                  />
+                  {medalla[index] && (
+                    <View
+                      style={[
+                        styles.medallaBadge,
+                        { backgroundColor: medalla[index].color },
+                      ]}
+                    >
+                      <FontAwesome5
+                        name={medalla[index].icon}
+                        size={12}
+                        color={COLORS.accentOn}
+                      />
+                    </View>
+                  )}
+                </View>
                 <Text style={styles.playerName} numberOfLines={1} ellipsizeMode="tail">
                   {index + 1}. {nombre}
                 </Text>
+              </View>
 
-                <Text style={styles.stats}>
-                  🍺 {stats.cumplidos}   ✖ {stats.fallos}
-                </Text>
-
+              <View style={styles.statsRow}>
+                <View style={styles.statBadge}>
+                  <FontAwesome5 name="beer" size={13} color={COLORS.accent} />
+                  <Text style={styles.statValue}>{stats.cumplidos}</Text>
+                </View>
+                <View style={styles.statBadge}>
+                  <FontAwesome5 name="times-circle" size={13} color={COLORS.danger} />
+                  <Text style={styles.statValue}>{stats.fallos}</Text>
+                </View>
+                <View style={styles.statBadge}>
+                  <FontAwesome5 name="fire" size={13} color={COLORS.accent} />
+                  <Text style={styles.statValue}>
+                    {rachasMaximasIndividuales[nombre] || 0}
+                  </Text>
+                </View>
               </View>
             </View>
           )}
           style={{ width: "100%", marginBottom: 30 }}
         />
 
-        <TouchableOpacity style={styles.button} onPress={volverAJugadores}>
-          <Text style={styles.buttonText}>Volver a jugadores</Text>
+        <TouchableOpacity style={styles.button} onPress={volverAlInicio}>
+          <Text style={styles.buttonText}>Volver al inicio</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -101,6 +145,7 @@ const COLORS = {
   gold: "#D4AF37",
   silver: "#B8BEC7",
   bronze: "#C08A52",
+  danger: "#E5484D",
 };
 
 const styles = StyleSheet.create({
@@ -127,8 +172,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   playerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     backgroundColor: COLORS.card,
     marginBottom: 10,
     padding: 14,
@@ -136,6 +179,11 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 1,
     borderColor: COLORS.cardBorder,
+  },
+  playerTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
   },
   primerLugar: {
     borderColor: COLORS.gold,
@@ -149,24 +197,52 @@ const styles = StyleSheet.create({
     borderColor: COLORS.bronze,
     borderWidth: 1.5,
   },
+  avatarWrapper: {
+    marginRight: 16,
+  },
   avatar: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    marginRight: 16,
     borderWidth: 2,
     borderColor: "rgba(242,169,59,0.35)",
   },
+  medallaBadge: {
+    position: "absolute",
+    bottom: -2,
+    right: -2,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: COLORS.card,
+  },
   playerName: {
+    flex: 1,
     fontSize: 19,
     color: COLORS.text,
     fontWeight: "700",
-    marginBottom: 4,
   },
-  stats: {
-    fontSize: 16,
-    color: COLORS.textMuted,
-    fontWeight: "500",
+  statsRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  statBadge: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderRadius: 8,
+    paddingVertical: 8,
+    gap: 5,
+  },
+  statValue: {
+    fontSize: 14,
+    color: COLORS.text,
+    fontWeight: "700",
   },
   button: {
     marginTop: 20,
@@ -183,10 +259,15 @@ const styles = StyleSheet.create({
     color: COLORS.accentOn,
     letterSpacing: 0.5,
   },
+  rachaGlobalRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 24,
+  },
   rachaText: {
     fontSize: 16,
     color: COLORS.textMuted,
-    marginBottom: 24,
   },
   rachaValue: {
     color: COLORS.accent,
