@@ -13,14 +13,24 @@ import { useSettings } from "../src/context/SettingsContext";
 
 const animales = [
   { nombre: "Rana", imagen: require("../assets/avatares/rana.webp") },
-  { nombre: "Caballo", imagen: require("../assets/avatares/caballo.webp") },
-  { nombre: "Oveja", imagen: require("../assets/avatares/oveja.webp") },
   { nombre: "Perro", imagen: require("../assets/avatares/perro.webp") },
   { nombre: "Gata", imagen: require("../assets/avatares/gata.webp") },
   { nombre: "Elefante", imagen: require("../assets/avatares/elefante.webp") },
-  { nombre: "Panda", imagen: require("../assets/avatares/panda.webp") },
   { nombre: "Zorra", imagen: require("../assets/avatares/zorra.webp") },
   { nombre: "Loro", imagen: require("../assets/avatares/loro.webp") },
+  { nombre: "Caballo", imagen: require("../assets/avatares/caballo.webp") },
+  { nombre: "Conejo", imagen: require("../assets/avatares/conejo.webp") },
+  { nombre: "Alien", imagen: require("../assets/avatares/alien.webp") },
+  { nombre: "Panda", imagen: require("../assets/avatares/panda.webp") },
+  { nombre: "Oveja", imagen: require("../assets/avatares/oveja.webp") },
+  { nombre: "Ballena", imagen: require("../assets/avatares/ballena.webp") },
+  { nombre: "Búho", imagen: require("../assets/avatares/buho.webp") },
+  { nombre: "Gallo", imagen: require("../assets/avatares/gallo.webp") },
+  { nombre: "Lagarto", imagen: require("../assets/avatares/lagarto.webp") },
+  { nombre: "Lobo", imagen: require("../assets/avatares/lobo.webp") },
+  { nombre: "Murciélago", imagen: require("../assets/avatares/murcielago.webp") },
+  { nombre: "Robot", imagen: require("../assets/avatares/robot.webp") },
+  { nombre: "Tortuga", imagen: require("../assets/avatares/tortuga.webp") },
 ];
 
 const amigos = [
@@ -49,7 +59,8 @@ export default function AvataresScreen() {
   const [seccion, setSeccion] = useState<Seccion>("animales");
   const [seleccionados, setSeleccionados] = useState<string[]>([]);
 
-  const listaActual = seccion === "moustache" && moustacheUnlocked ? amigos : animales;
+  const listaActual =
+    seccion === "moustache" && moustacheUnlocked ? amigos : animales;
 
   // Filtra los avatares que ya están en uso por un jugador existente
   const disponibles = listaActual.filter(
@@ -197,6 +208,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     paddingTop: 80,
+    paddingBottom: 30,
     paddingHorizontal: 20,
   },
   title: {
@@ -237,7 +249,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   grid: {
-    paddingBottom: 20,
+    paddingBottom: 40,
   },
   gridRow: {
     justifyContent: "center",
@@ -277,7 +289,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     width: "70%",
     alignItems: "center",
-    marginBottom: 60,
+    marginBottom: 40,
   },
   confirmText: {
     fontSize: 16,
