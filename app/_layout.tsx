@@ -1,3 +1,4 @@
+import { Creepster_400Regular, useFonts } from "@expo-google-fonts/creepster";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import * as SystemUI from "expo-system-ui";
@@ -17,6 +18,7 @@ const STORAGE_KEY_AGE_CONFIRMED = "@picolo/age_confirmed";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const [fontsLoaded] = useFonts({ Creepster_400Regular });
   const [showLoading, setShowLoading] = React.useState(true);
   const [edadConfirmada, setEdadConfirmada] = React.useState<boolean | null>(null);
 
@@ -73,7 +75,7 @@ export default function RootLayout() {
             <StatusBar style="light" />
           </ThemeProvider>
 
-          {(showLoading || edadConfirmada === null) && (
+          {(showLoading || edadConfirmada === null || !fontsLoaded) && (
             <LoadingScreen onFinish={() => setShowLoading(false)} />
           )}
           {!showLoading && edadConfirmada === false && (

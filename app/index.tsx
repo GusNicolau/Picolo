@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
 import {
   ImageBackground,
   Pressable,
@@ -36,8 +35,8 @@ export default function HomeScreen() {
           <Ionicons name="settings-outline" size={22} color={COLORS.text} />
         </Pressable>
 
-        <Text style={styles.title}>PICOLO BATTLE</Text>
-        <Text style={styles.subtitle}>Selecciona tu modo de combate</Text>
+        <Text style={styles.title}>Picolo</Text>
+        <Text style={styles.subtitle}>Juego para beber</Text>
 
         <Pressable
           style={({ pressed }) => [
@@ -85,7 +84,7 @@ const styles = StyleSheet.create({
   },
   settingsButton: {
     position: "absolute",
-    top: 60,
+    top: 85,
     right: 20,
     width: 40,
     height: 40,
@@ -98,15 +97,20 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   title: {
-    fontSize: 38,
-    fontWeight: "700",
-    letterSpacing: 1,
-    color: COLORS.text,
-    marginBottom: 10,
+    fontFamily: "Creepster_400Regular",
+    fontSize: 84,
+    color: COLORS.accent,
+    marginBottom: 16,
     textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 6,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 17,
+    fontWeight: "600",
+    letterSpacing: 2,
+    textTransform: "uppercase",
     color: COLORS.textMuted,
     marginBottom: 50,
     textAlign: "center",
