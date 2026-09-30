@@ -72,7 +72,6 @@ const avataresAnimales: any[] = [
   require("../assets/avatares/alien.webp"),
   require("../assets/avatares/ballena.webp"),
   require("../assets/avatares/buho.webp"),
-  require("../assets/avatares/gallo.webp"),
   require("../assets/avatares/lagarto.webp"),
   require("../assets/avatares/lobo.webp"),
   require("../assets/avatares/murcielago.webp"),
@@ -84,7 +83,9 @@ const avataresAnimales: any[] = [
 // número se extrae como código oculto y no se muestra — el nombre visible
 // se queda limpio ("Mario"). Dos jugadores con el mismo código se
 // favorecen entre sí en los retos de pareja (ver app/juego.tsx).
-const extraerCodigoPareja = (input: string): { nombre: string; codigo?: string } => {
+const extraerCodigoPareja = (
+  input: string,
+): { nombre: string; codigo?: string } => {
   const match = input.match(/(\d+)\s*$/);
   if (!match || match.index === undefined) return { nombre: input };
   const base = input.slice(0, match.index).trim();
@@ -125,7 +126,8 @@ export default function JugadoresScreen() {
     const trimmedInput = nombre.trim();
     if (!trimmedInput) return;
 
-    const { nombre: trimmed, codigo: codigoPareja } = extraerCodigoPareja(trimmedInput);
+    const { nombre: trimmed, codigo: codigoPareja } =
+      extraerCodigoPareja(trimmedInput);
 
     if (
       jugadores.some((j) => j.nombre.toLowerCase() === trimmed.toLowerCase())
@@ -164,10 +166,13 @@ export default function JugadoresScreen() {
       setEditingName(null);
       return;
     }
-    const { nombre: trimmed, codigo: codigoPareja } = extraerCodigoPareja(trimmedInput);
+    const { nombre: trimmed, codigo: codigoPareja } =
+      extraerCodigoPareja(trimmedInput);
     if (
       jugadores.some(
-        (j) => j.nombre !== nombreActual && j.nombre.toLowerCase() === trimmed.toLowerCase()
+        (j) =>
+          j.nombre !== nombreActual &&
+          j.nombre.toLowerCase() === trimmed.toLowerCase(),
       )
     ) {
       Alert.alert("Nombre repetido", "Ya existe un jugador con ese nombre.");
@@ -411,7 +416,7 @@ const styles = StyleSheet.create({
   },
   settingsButton: {
     position: "absolute",
-    top: 60,
+    top: 85,
     right: 20,
     width: 40,
     height: 40,

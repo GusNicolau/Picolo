@@ -25,10 +25,12 @@ const animales = [
   { nombre: "Oveja", imagen: require("../assets/avatares/oveja.webp") },
   { nombre: "Ballena", imagen: require("../assets/avatares/ballena.webp") },
   { nombre: "Búho", imagen: require("../assets/avatares/buho.webp") },
-  { nombre: "Gallo", imagen: require("../assets/avatares/gallo.webp") },
   { nombre: "Lagarto", imagen: require("../assets/avatares/lagarto.webp") },
   { nombre: "Lobo", imagen: require("../assets/avatares/lobo.webp") },
-  { nombre: "Murciélago", imagen: require("../assets/avatares/murcielago.webp") },
+  {
+    nombre: "Murciélago",
+    imagen: require("../assets/avatares/murcielago.webp"),
+  },
   { nombre: "Robot", imagen: require("../assets/avatares/robot.webp") },
   { nombre: "Tortuga", imagen: require("../assets/avatares/tortuga.webp") },
 ];
