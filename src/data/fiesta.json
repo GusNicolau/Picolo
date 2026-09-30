@@ -53,7 +53,8 @@
     "texto": "🍻 Todos brindan y beben 1 trago"
   },
   {
-    "texto": "👀 El último en mirar a los ojos a {player} bebe 1 trago"
+    "texto": "👀 El último en mirar a los ojos a {player} bebe 1 trago",
+    "grupal": true
   },
   {
     "texto": "😜 El resto del grupo elige a quién y qué le manda {player} por mensaje, o se acaba la copa"
@@ -95,7 +96,8 @@
     "texto": "🔒 {player} no puede beber en las próximas 3 rondas aunque le toque"
   },
   {
-    "texto": "👑 {player} es el \"rey/reina\" durante 3 rondas: todos le obedecen o beben 3 tragos"
+    "texto": "👑 {player} es el \"rey/reina\" durante 3 rondas: todos le obedecen o beben 3 tragos",
+    "grupal": true
   },
   {
     "texto": "🎭 {player} tiene que hablar con acento random hasta su próximo turno o bebe 3 tragos"
@@ -155,7 +157,8 @@
     "texto": "👯 {player} elige a otro jugador para brindar juntos 2 tragos"
   },
   {
-    "texto": "🚫 A partir de ahora nadie puede decir el nombre de {player}; quien lo diga bebe 2 tragos"
+    "texto": "🚫 A partir de ahora nadie puede decir el nombre de {player}; quien lo diga bebe 2 tragos",
+    "grupal": true
   },
   {
     "texto": "🤳 {player} llama a alguien de su lista de contactos y le dice algo random o bebe 2 tragos"
@@ -230,7 +233,8 @@
     "texto": "😐 El grupo tiene 30 segundos para hacer reír a {player}; si lo consiguen, {player} bebe 2 tragos"
   },
   {
-    "texto": "🛒 {player} empieza diciendo \"voy a la compra y llevo...\" y cada jugador añade algo pasando el turno a su derecha; el primero que se equivoque bebe 2 tragos"
+    "texto": "🛒 {player} empieza diciendo \"voy a la compra y llevo...\" y cada jugador añade algo pasando el turno a su derecha; el primero que se equivoque bebe 2 tragos",
+    "grupal": true
   },
   {
     "texto": "🪙 {player} y {player2} juegan a cara o cruz; el que pierda bebe 2 tragos"
@@ -239,13 +243,16 @@
     "texto": "👁️ {player} y {player2} compiten a quién aguanta más sin parpadear; el que pierda bebe 2 tragos"
   },
   {
-    "texto": "💦 Cascada: todos empiezan a beber a la vez, nadie puede parar hasta que lo haga {player}, y así en cadena con el de su derecha"
+    "texto": "💦 Cascada: todos empiezan a beber a la vez, nadie puede parar hasta que lo haga {player}, y así en cadena con el de su derecha",
+    "grupal": true
   },
   {
-    "texto": "🤔 {player} propone un \"¿quién es más probable que...?\"; todos señalan a la vez y quien reciba más votos bebe 2 tragos"
+    "texto": "🤔 {player} propone un \"¿quién es más probable que...?\"; todos señalan a la vez y quien reciba más votos bebe 2 tragos",
+    "grupal": true
   },
   {
-    "texto": "🙊 {player} dice un \"yo nunca...\"; quien sí lo haya hecho bebe 1 trago"
+    "texto": "🙊 {player} dice un \"yo nunca...\"; quien sí lo haya hecho bebe 1 trago",
+    "grupal": true
   },
   {
     "texto": "🗳️ El grupo vota quién es el chico más gracioso; el más votado bebe 2 tragos",
@@ -282,13 +289,15 @@
     "texto": "🔢 {player} tiene que adivinar cuántos dedos va a levantar el resto a la de 3; si falla, bebe 2 tragos"
   },
   {
-    "texto": "🥁 {player} empieza un ritmo con las manos; el jugador de su derecha tiene que repetirlo, si se equivoca bebe 1 trago"
+    "texto": "🥁 {player} empieza un ritmo con las manos; el jugador de su derecha tiene que repetirlo, si se equivoca bebe 1 trago",
+    "grupal": true
   },
   {
     "texto": "🎙️ {player} tiene que hacer de reportero y entrevistar a alguien del grupo durante 30 segundos, o bebe 2 tragos"
   },
   {
-    "texto": "🃏 {player} piensa un número del 1 al 10; el resto vota a la vez; quien más se acerque elige quién bebe 2 tragos"
+    "texto": "🃏 {player} piensa un número del 1 al 10; el resto vota a la vez; quien más se acerque elige quién bebe 2 tragos",
+    "grupal": true
   },
   {
     "texto": "🎵 {player} tararea una canción; si el resto no la adivina en 20 segundos, bebe 2 tragos"
@@ -306,13 +315,15 @@
     "texto": "🧍 {player} no puede sentarse el resto de la ronda, o bebe 1 trago"
   },
   {
-    "texto": "🥸 {player} elige un mote nuevo para el resto de la partida; quien le llame por su nombre real bebe 1 trago"
+    "texto": "🥸 {player} elige un mote nuevo para el resto de la partida; quien le llame por su nombre real bebe 1 trago",
+    "grupal": true
   },
   {
     "texto": "🕵️ {player} tiene que adivinar en qué objeto está pensando el jugador de su izquierda con 3 preguntas, o bebe 2 tragos"
   },
   {
-    "texto": "👋 El último en chocar la mano con {player} bebe 1 trago"
+    "texto": "👋 El último en chocar la mano con {player} bebe 1 trago",
+    "grupal": true
   },
   {
     "texto": "🍿 {player} tiene que narrar lo que pasa en la mesa como un comentarista deportivo durante 20 segundos, o bebe 2 tragos"
