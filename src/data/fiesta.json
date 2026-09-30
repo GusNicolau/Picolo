@@ -16,24 +16,17 @@
     "texto": "😈 {player} elige quién bebe 3 tragos"
   },
   {
-    "texto": "🍺 {player} tiene que beber 2 tragos"
-  },
-  {
     "texto": "🔥 Las chicas beben 2 tragos",
     "genero": "mujer"
   },
   {
-    "texto": "🔥 Los chicos beben 2 tragos",
-    "genero": "hombre"
+    "texto": "👏 Todos brindan a la vez; el último en chocar el vaso bebe 1 trago"
   },
   {
     "texto": "😂 Todos los que lleven camiseta oscura beben 1 trago"
   },
   {
     "texto": "👉 {player} reparte 2 tragos entre quien quiera"
-  },
-  {
-    "texto": "😈 {player} elige quién bebe 3 tragos"
   },
   {
     "texto": "🙌 Todos los solteros beben 1 trago"
@@ -296,5 +289,59 @@
   },
   {
     "texto": "🃏 {player} piensa un número del 1 al 10; el resto vota a la vez; quien más se acerque elige quién bebe 2 tragos"
+  },
+  {
+    "texto": "🎵 {player} tararea una canción; si el resto no la adivina en 20 segundos, bebe 2 tragos"
+  },
+  {
+    "texto": "🧢 {player} tiene que llevar algo random en la cabeza hasta su próximo turno, o bebe 2 tragos"
+  },
+  {
+    "texto": "🔤 {player} tiene que decir su nombre completo al revés, o bebe 2 tragos"
+  },
+  {
+    "texto": "📵 Nadie puede mirar el móvil durante 3 rondas; quien lo haga bebe 2 tragos"
+  },
+  {
+    "texto": "🧍 {player} no puede sentarse el resto de la ronda, o bebe 1 trago"
+  },
+  {
+    "texto": "🥸 {player} elige un mote nuevo para el resto de la partida; quien le llame por su nombre real bebe 1 trago"
+  },
+  {
+    "texto": "🕵️ {player} tiene que adivinar en qué objeto está pensando el jugador de su izquierda con 3 preguntas, o bebe 2 tragos"
+  },
+  {
+    "texto": "👋 El último en chocar la mano con {player} bebe 1 trago"
+  },
+  {
+    "texto": "🍿 {player} tiene que narrar lo que pasa en la mesa como un comentarista deportivo durante 20 segundos, o bebe 2 tragos"
+  },
+  {
+    "texto": "🎯 {player} elige a alguien para hacer 5 sentadillas, o beber 2 tragos"
+  },
+  {
+    "texto": "🧦 {player} tiene que ponerse un calcetín en la mano y llevarlo puesto 2 rondas, o bebe 2 tragos"
+  },
+  {
+    "texto": "🗳️ El grupo vota quién viste mejor esta noche; el más votado reparte 2 tragos"
+  },
+  {
+    "texto": "🎪 {player} tiene que presentar el siguiente reto como un presentador de circo, o bebe 1 trago"
+  },
+  {
+    "texto": "🤹 {player} tiene que hablar metiendo la palabra \"banana\" cada 3 palabras durante 1 ronda, o bebe 2 tragos"
+  },
+  {
+    "texto": "🎲 {player} y {player2} juegan a piedra, papel o tijera al mejor de 3; el perdedor bebe 2 tragos"
+  },
+  {
+    "texto": "🐒 {player} tiene que rascarse como un mono cada vez que digan su nombre hasta su próximo turno, o bebe 2 tragos"
+  },
+  {
+    "texto": "🎈 {player} elige a otro jugador para hacerle cosquillas 5 segundos, o beben 1 trago cada uno"
+  },
+  {
+    "texto": "🥶 {player} tiene que aguantar la cara seria mientras el resto intenta hacerle reír 20 segundos, o bebe 2 tragos"
   }
 ]
